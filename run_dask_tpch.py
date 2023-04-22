@@ -5,7 +5,6 @@ from DaskDB import query as qr
 from DaskDB import dask_physical_plan as dpp
 from DaskDB import dask_plan as dp
 from DaskDB import dask_learned_index as dli
-import ptvsd
 
 from DaskDB.setup_configuration import get_dask_scheduler_IP, get_dask_scheduler_port
 import pandas as pd
