@@ -5,6 +5,7 @@ from DaskDB import  query as qr
 from DaskDB import dask_physical_plan as dpp
 from DaskDB import dask_plan as dp
 from DaskDB import dask_learned_index as dli
+import ptvsd
 
 from DaskDB.setup_configuration import get_dask_scheduler_IP, get_dask_scheduler_port
 import pandas as pd
@@ -19,7 +20,7 @@ from scipy import optimize
 from math import ceil
 from builtins import dir
 
-
+ptvsd.enable_attach()
 scheduler_ip_port = get_dask_scheduler_IP() + ':' + str(get_dask_scheduler_port())
 client = Client(scheduler_ip_port)
 client.restart()
