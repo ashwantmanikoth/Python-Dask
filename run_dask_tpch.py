@@ -696,6 +696,13 @@ sql_test = """SELECT
 	SUM(l_quantity) AS total_quantity
 FROM
 	lineitem
+WHERE
+	l_suppkey > (
+		SELECT
+			MAX(l_suppkey)
+		FROM
+			iterative_cte
+	)
 GROUP BY
 	l_suppkey
 LIMIT
