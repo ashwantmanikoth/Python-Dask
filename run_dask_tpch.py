@@ -677,7 +677,7 @@ order by
 	revenue desc
 limit 5;"""
 
-sql_test = """select
+sql_testxx = """select
 	l_orderkey,
 	sum(l_extendedprice * (1 - l_discount)) as revenue
 from
@@ -691,6 +691,12 @@ group by
 order by
 	revenue
 limit 5;"""
+
+sql_test = """SELECT l_suppkey, SUM(l_extendedprice * (1 - l_discount)) AS total_revenue, 1 AS batch_num
+  FROM lineitem
+  WHERE l_shipdate BETWEEN '1996-01-01' AND '1996-03-31'
+  GROUP BY l_suppkey
+  LIMIT 100000;"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from
