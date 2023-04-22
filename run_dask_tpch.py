@@ -697,8 +697,8 @@ sql_test = """SELECT
 FROM
 	lineitem
 WHERE
-	l_shipdate >= '1994-01-01'
-	AND l_shipdate < '1995-01-01';
+	l_shipdate >= date '1994-01-01'
+	AND l_shipdate < date '1995-01-01';
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
