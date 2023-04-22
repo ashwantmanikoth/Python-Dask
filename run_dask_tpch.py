@@ -692,19 +692,17 @@ order by
 limit 5;"""
 
 sql_test = """SELECT
-	l_suppkey,
-	SUM(l_quantity) AS total_quantity
+	l.l_suppkey,
+	SUM(l.l_quantity) AS total_quantity,
+	MAX(l.l_suppkey) AS max_l_suppkey
 FROM
-	lineitem
+	lineitem l
+	LEFT JOIN lineitem i ON l.l_suppkey = i.l_suppkey
+	AND l.l_suppkey > i.max_l_suppkey
 WHERE
-	l_suppkey > (
-		SELECT
-			MIN(l_suppkey)
-		FROM
-			lineitem
-	)
+	i.l_suppkey IS NOT NULL
 GROUP BY
-	l_suppkey
+	l.l_suppkey
 LIMIT
 	10000;"""
 
