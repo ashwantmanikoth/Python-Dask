@@ -691,7 +691,7 @@ order by
 	revenue
 limit 5;"""
 
-sql_test = """select
+sql_test_working = """select
 	SUM(l_quantity),
 	l_orderkey
 from
@@ -701,6 +701,15 @@ where
 	AND l_shipdate < date '1995-01-01'
 group by
 	l_orderkey;
+	"""
+
+sql_test = """WITH RECURSIVE fib_cte(n, a, b) AS (
+  SELECT 0, 0, 1
+  UNION ALL
+  SELECT i.n + 1, i.b, i.a + i.b
+  FROM fib_cte i
+  WHERE i.n < 5;
+);
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
