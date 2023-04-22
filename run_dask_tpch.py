@@ -18,6 +18,7 @@ from sklearn.cluster import KMeans
 from scipy import optimize
 from math import ceil
 from builtins import dir
+import sys
 
 
 scheduler_ip_port = get_dask_scheduler_IP() + ':' + str(get_dask_scheduler_port())
@@ -310,6 +311,7 @@ dli.set_clean_data_func(clean_foreign_data)
 udf_list = []
 def query(sql,scale_factor='1'):
     print("Hello Nidhin")
+    print("Python version:", sys.version)
     plan,used_columns=qr.getPlan(sql, udf_list)
     #print "logical plan:", plan
     phys = dpp.PhysicalPlan()
