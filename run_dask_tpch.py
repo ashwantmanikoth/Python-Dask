@@ -691,14 +691,16 @@ order by
 	revenue
 limit 5;"""
 
-sql_test = """SELECT
+sql_test = """select
 	SUM(l_quantity),
-	1
-FROM
+	l_orderkey
+from
 	lineitem
-WHERE
+where
 	l_shipdate >= date '1994-01-01'
-	AND l_shipdate < date '1995-01-01';
+	AND l_shipdate < date '1995-01-01'
+group by
+	l_orderkey;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
