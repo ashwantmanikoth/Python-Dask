@@ -310,7 +310,7 @@ dli.set_clean_data_func(clean_foreign_data)
 
 udf_list = []
 def query(sql,scale_factor='1'):
-    print("Hello Nidhin")
+    print("Hello Joseph")
     print("Python version:", sys.version)
     plan,used_columns=qr.getPlan(sql, udf_list)
     #print "logical plan:", plan
