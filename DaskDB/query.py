@@ -57,7 +57,7 @@ dp.set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, c
 # def getForeignKeyInfo():
 #     return foreign_key
 
- 
+
 def getPlan(sql, udf_list):
     #if '(' in sql:
      #   plan=getNestedPlan(sql)
@@ -66,21 +66,21 @@ def getPlan(sql, udf_list):
     print(plan)
     return plan,used_columns
 def get_dataframe(alias):
-    if alias == 'lineitem':   
+    if alias == 'lineitem':
         df = dd.read_csv('data/'+alias+".csv",delimiter="|",names=col_names_lineitem, parse_dates=[10,11,12]);
-    elif alias == 'customer':   
+    elif alias == 'customer':
         df = dd.read_csv('data/'+alias+".csv",delimiter="|",names=col_names_customer);
-    elif alias == 'orders':   
+    elif alias == 'orders':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_orders, parse_dates=[4]);
-    elif alias == 'part':   
+    elif alias == 'part':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_part);
-    elif alias == 'supplier':   
+    elif alias == 'supplier':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_supplier);
-    elif alias == 'partsupp':   
+    elif alias == 'partsupp':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_partsupp);
-    elif alias == 'nation':   
+    elif alias == 'nation':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_nation);
-    elif alias == 'region':   
+    elif alias == 'region':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_region);
     else:
         return None
@@ -93,13 +93,13 @@ def getNormalPlan(sql, udf_list):
     sql_re = sql
     if 'limit' in sql:
         test = re.compile('\slimit\s\d+')
-        sql_re = test.sub('',sql_re)  
+        sql_re = test.sub('',sql_re)
     if 'interval' in sql:
         test = re.compile('(\-|\+)\sinterval\s(\"|\')\d+(\"|\')\s\w+')
         sql_re = test.sub('',sql_re)
     if 'date' in sql:
         test = re.compile('\sdate\s')
-        sql_re = test.sub('',sql_re)  
+        sql_re = test.sub('',sql_re)
 
     #q,used_columns,find_func=vt.getTableName(sql_re)
     q = sql_metadata.get_query_tables(sql_re)
@@ -120,10 +120,10 @@ def getNormalPlan(sql, udf_list):
         string_main=string_main+string
         #print (string_main)
         alias=string
-         
+
         df = get_dataframe(alias)
         #exec(df_read_string)
- 
+
         a=df.dtypes.tolist()
         for i in a:
             if i == 'int64':
@@ -134,7 +134,7 @@ def getNormalPlan(sql, udf_list):
                     b.append("STRING_TYPE")
             if i == 'datetime64[ns]':
                     b.append("DATETIME_TYPE")
-         
+
         d=df.columns.values.tolist()
         #print(d)
         _cols = []
@@ -155,11 +155,15 @@ def getNormalPlan(sql, udf_list):
         filler2=""");"""
         finalstring=finalstring+q[i].lower()+ filler +q[i].lower()+filler2
     if find_func:
+        print(finalstring +
+              """out = """ + sql + """
+            store(out, OUTPUT);
+            """, find_func)
         statement_list = _parser.parse(
-            finalstring+
+            finalstring +
             """out = """ + sql + """
             store(out, OUTPUT);
-            """,find_func)
+            """, find_func)
     else:
            statement_list = _parser.parse(
             finalstring+
@@ -183,7 +187,7 @@ def get_plan_for_all():
         string_main=string_main+string
         print (string_main)
         alias=string
-        
+
         df_read_string = get_string_dataframe(alias)
         exec(df_read_string)
 
@@ -197,8 +201,8 @@ def get_plan_for_all():
                     b.append("STRING_TYPE")
             if i == 'datetime64[ns]':
                     b.append("DATETIME_TYPE")
-        
-        
+
+
         d=df.columns.values.tolist()
         for i in range(len(b)):
             p.append((d[i],b[i]))
@@ -221,7 +225,7 @@ def getNestedPlan(sql):
     sql_re = sqlnew
     if 'limit' in sql:
         test = re.compile('\slimit\s\d+')
-        sql_re = test.sub('',sql_re)  
+        sql_re = test.sub('',sql_re)
     if 'interval' in sql:
         test = re.compile('(\-|\+)\sinterval\s(\"|\')\d+(\"|\')\s\w+')
         sql_re = test.sub('',sql_re)
@@ -238,7 +242,7 @@ def getNestedPlan(sql):
         string_main=string_main+string
         print (string_main)
         alias=string
-          
+
         df_read_string = get_string_dataframe(alias)
         exec(df_read_string)
         a=df.dtypes.tolist()
@@ -277,7 +281,7 @@ def getNestedPlan(sql):
     df = da_pl.convert_to_dask_code(dask_plan)
 #df.visualize(filename='test.png')
     print (df.compute())
-    df.compute().to_csv("data/temp.csv", encoding='utf-8', index=False) 
+    df.compute().to_csv("data/temp.csv", encoding='utf-8', index=False)
     sqlnewest=sql[0:sql.find("(")]+"temp ;"
     print (sqlnewest)
     plan,used_columns=getNormalPlan(sqlnewest)
