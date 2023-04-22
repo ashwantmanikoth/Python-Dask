@@ -701,7 +701,7 @@ WHERE
 		SELECT
 			MAX(l_suppkey)
 		FROM
-			iterative_cte
+			lineitem
 	)
 GROUP BY
 	l_suppkey
