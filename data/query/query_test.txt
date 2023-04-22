@@ -1,0 +1,64 @@
+sql_test = """select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue
+from
+	orders,
+	lineitem
+where
+	l_orderkey = o_orderkey
+	and o_orderdate >= date '1995-01-01'
+group by
+	l_orderkey
+order by
+	revenue
+limit 5;"""
+
+-------------------------------------------------
+Query execution time: 11.2706291676
+-------------------------------------------------
+Total time taken:  3.4205789566
+
+Time taken (except file loadng):  0.114395141602
+-------------------------------------------------
+       l_orderkey      revenue
+50514       92685  443151.2042
+57100      104951  440253.7446
+34579       63414  438058.1785
+3969         7293  434796.5388
+43277       79416  431902.1246
+--------------------------------------------------
+
+Lab20bd18_
+
+Dask
+
+[1, 240998, 600000]
+Total time taken:  4.37348103523
+
+Time taken (except file loadng):  4.31425714493
+
+============================================================================
+
+sql3 = """select
+    l_orderkey,
+    sum(l_extendedprice * (1 - l_discount)) as revenue,
+    o_orderdate,
+    o_shippriority
+from
+    orders,
+    customer,
+    lineitem
+where
+    c_mktsegment = 'HOUSEHOLD'
+    and c_custkey = o_custkey
+    and l_orderkey = o_orderkey
+    and o_orderdate < date '1995-03-21'
+    and l_shipdate > date '1995-03-21'
+group by
+    l_orderkey,
+    o_orderdate,
+    o_shippriority
+order by
+    revenue desc,
+    o_orderdate
+limit 10; """

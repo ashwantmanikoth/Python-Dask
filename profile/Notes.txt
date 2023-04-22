@@ -1,0 +1,8 @@
+
+1. https://julien.danjou.info/guide-to-python-profiling-cprofile-concrete-case-carbonara/
+pip install pyprof2calltree
+
+python -m cProfile -o myscript.cprof  run_dask_tpch_debug_dd.py
+pyprof2calltree -k -i myscript.cprof
+
+2. 

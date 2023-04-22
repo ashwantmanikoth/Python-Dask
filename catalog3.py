@@ -1,0 +1,1 @@
+{"public:adhoc:orders": [["o_orderkey", "LONG_TYPE"], ["o_orderdate", "DATETIME_TYPE"]], "public:adhoc:lineitem": [["l_orderkey", "LONG_TYPE"], ["l_extendedprice", "DOUBLE_TYPE"], ["l_discount", "DOUBLE_TYPE"]]}
