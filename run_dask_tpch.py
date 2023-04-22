@@ -691,14 +691,14 @@ order by
 	revenue
 limit 5;"""
 
-sql_test = """SELECT
+sql_test = """select
 	o_orderpriority,
 	o_totalprice
-FROM
+from
 	orders
-ORDER BY
+order by
 	o_orderpriority
-LIMIT
+limit
 	10000"""
 
 sql_test_2 = """select o_orderkey, o_custkey
