@@ -691,15 +691,16 @@ order by
 	revenue
 limit 5;"""
 
-sql_test = """select
+sql_test = """SELECT
 	l_shipmode,
 	l_quantity
-from
+FROM
 	lineitem
-order by
+ORDER BY
 	l_shipmode
-limit
-	10000"""
+LIMIT
+	10000;
+	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from

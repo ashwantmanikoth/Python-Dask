@@ -63,7 +63,6 @@ def getPlan(sql, udf_list):
      #   plan=getNestedPlan(sql)
     #else :
     plan,used_columns=getNormalPlan(sql, udf_list)
-    print(plan)
     return plan,used_columns
 def get_dataframe(alias):
     if alias == 'lineitem':
