@@ -691,18 +691,18 @@ order by
 	revenue
 limit 5;"""
 
-sql_test = """SELECT
+sql_test = """select
 	l_suppkey,
-	SUM(l_extendedprice * (1 - l_discount)) AS total_revenue,
-	1 AS batch_num
-FROM
+	sum(l_extendedprice * (1 - l_discount)) AS total_revenue,
+	1 as batch_num
+from
 	lineitem
-WHERE
+where
 	l_shipdate >= '1996-01-01'
-	AND l_shipdate < '1996-04-01'
-GROUP BY
+	and l_shipdate < '1996-04-01'
+group by
 	l_suppkey
-LIMIT
+limit
 	100000;"""
 
 sql_test_2 = """select o_orderkey, o_custkey
