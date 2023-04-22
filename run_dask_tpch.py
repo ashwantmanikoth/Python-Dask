@@ -692,19 +692,14 @@ order by
 limit 5;"""
 
 sql_test = """SELECT
-	l.l_suppkey,
-	SUM(l.l_quantity) AS total_quantity,
-	MAX(l.l_suppkey) AS max_l_suppkey
+	o_orderpriority,
+	o_totalprice
 FROM
-	lineitem l
-	LEFT JOIN lineitem i ON l.l_suppkey = i.l_suppkey
-	AND l.l_suppkey > i.max_l_suppkey
-WHERE
-	i.l_suppkey IS NOT NULL
-GROUP BY
-	l.l_suppkey
+	orders
+ORDER BY
+	o_orderpriority
 LIMIT
-	10000;"""
+	10000"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from
