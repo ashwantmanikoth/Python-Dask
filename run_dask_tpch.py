@@ -692,12 +692,12 @@ order by
 limit 5;"""
 
 sql_test = """select
-	o_orderpriority,
-	o_totalprice
+	l_shipmode,
+	l_quantity
 from
-	orders
+	lineitem
 order by
-	o_orderpriority
+	l_shipmode
 limit
 	10000"""
 
