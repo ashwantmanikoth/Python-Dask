@@ -703,11 +703,7 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select 0, 0, 1
-  union all
-  select i.n + 1, i.b, i.a + i.b
-  from fib_cte i
-  where i.n < 5;;
+sql_test = """select 0, 0, 1;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
