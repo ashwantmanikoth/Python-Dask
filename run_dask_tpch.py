@@ -705,7 +705,16 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select 0, 0, 1;
+sql_test = """select
+	SUM(l_quantity),
+	l_orderkey
+from
+	lineitem
+where
+	l_shipdate >= date '1994-01-01'
+	AND l_shipdate < date '1995-01-01'
+group by
+	l_orderkey;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
