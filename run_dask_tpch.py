@@ -692,14 +692,13 @@ order by
 limit 5;"""
 
 sql_test = """SELECT
-	l_shipmode,
-	l_quantity
+	SUM(l_quantity),
+	1
 FROM
 	lineitem
-ORDER BY
-	l_shipmode
-LIMIT
-	10000;
+WHERE
+	l_shipdate >= '1994-01-01'
+	AND l_shipdate < '1995-01-01';
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
