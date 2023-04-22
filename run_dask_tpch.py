@@ -312,7 +312,6 @@ udf_list = []
 def query(sql,scale_factor='1'):
     print("Hello Nidhin")
     print("Python version:", sys.version)
-    print(raco.__version__)
     plan,used_columns=qr.getPlan(sql, udf_list)
     #print "logical plan:", plan
     phys = dpp.PhysicalPlan()

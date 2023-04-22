@@ -1,5 +1,6 @@
 #! /home1/grads/sdas6/anaconda2/bin/python2.7
 
+import raco
 import raco.myrial.parser as parser
 import raco.myrial.interpreter as interpreter
 import raco.backends.myria as alg
@@ -62,6 +63,7 @@ def getPlan(sql, udf_list):
     #if '(' in sql:
      #   plan=getNestedPlan(sql)
     #else :
+    print(raco.__version__)
     plan,used_columns=getNormalPlan(sql, udf_list)
     return plan,used_columns
 def get_dataframe(alias):
