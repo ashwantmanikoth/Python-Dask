@@ -699,7 +699,7 @@ FROM
 WHERE
 	l_suppkey > (
 		SELECT
-			MAX(l_suppkey)
+			MIN(l_suppkey)
 		FROM
 			lineitem
 	)
