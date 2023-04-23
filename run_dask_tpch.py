@@ -313,6 +313,8 @@ def query(sql,scale_factor='1'):
     print("Hello Joseph")
     print("Python version:", sys.version)
     plan,used_columns=qr.getPlan(sql, udf_list)
+    plan = plan[0]
+    used_columns = used_columns[0]
     #print "logical plan:", plan
     phys = dpp.PhysicalPlan()
     #print "physical plan:", phys
