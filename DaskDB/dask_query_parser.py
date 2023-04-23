@@ -38,9 +38,9 @@ class DaskQueryParser:
 
             self.query = self.query.replace(self.cte + ".", self.cte + "_", -1)
 
-            self.base = re.search(base_case_pattern, query, re.DOTALL | re.IGNORECASE).group(1) + ";"
-            self.iterative = re.search(recursive_case_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
-            self.final = re.search(final_query_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
+            self.base = re.search(base_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(1) + ";"
+            self.iterative = re.search(recursive_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
+            self.final = re.search(final_query_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
 
         return self
 
