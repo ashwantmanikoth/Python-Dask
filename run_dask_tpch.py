@@ -721,7 +721,7 @@ sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_
   l_orderkey = cumulative_extended_prices.l_orderkey + 1
   and l_orderkey <= 10
   group by
-    l_orderkey;
+    l_orderkey, cumulative_extended_prices.cumulative_price;
 )
 select l_orderkey from cumulative_extended_prices;
 	"""
