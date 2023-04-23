@@ -204,7 +204,6 @@ def get_query_plan(sql, udf_list, query_context):
             """out = """ + sql + """
             store(out, OUTPUT);
             """)
-    exit(99)
     processor = interpreter.StatementProcessor(_catalog, True)
     processor.evaluate(statement_list)
     plan = processor.get_json()
