@@ -150,34 +150,37 @@ def get_query_plan(sql, udf_list, query_context):
         #print (string_main)
         alias=string
 
+        p = []
         if query_context.is_iterative() and query_context.cte == alias:
-            alias = query_context.main_table
+            use_cols[string] = query_context.cte_params
+            for item in query_context.cte_params:
+                p.append((item, 'STRING_TYPE'))
+        else:
+            df = get_dataframe(alias)
+            #exec(df_read_string)
 
-        print("Alias = ")
-        print(alias)
-        df = get_dataframe(alias)
-        #exec(df_read_string)
-
-        a=df.dtypes.tolist()
-        for i in a:
-            if i == 'int64':
-                b.append("LONG_TYPE")
-            if i == 'float64':
-                b.append("DOUBLE_TYPE")
-            if i == 'object':
-                    b.append("STRING_TYPE")
-            if i == 'datetime64[ns]':
+            a=df.dtypes.tolist()
+            for i in a:
+                if i == 'int64':
+                    b.append("LONG_TYPE")
+                elif i == 'float64':
+                    b.append("DOUBLE_TYPE")
+                elif i == 'datetime64[ns]':
                     b.append("DATETIME_TYPE")
+                else:
+                    b.append("STRING_TYPE")
 
-        d=df.columns.values.tolist()
-        #print(d)
-        _cols = []
-        for i in range(len(b)):
-            if d[i] in used_columns:
-                _cols.append(d[i])
-                p.append((d[i],b[i]))
-        use_cols[string] = _cols
+            d=df.columns.values.tolist()
+            #print(d)
+            _cols = []
+            for i in range(len(b)):
+                if d[i] in used_columns:
+                    _cols.append(d[i])
+                    p.append((d[i],b[i]))
+            use_cols[string] = _cols
+
         my_dict.update({string_main:p})
+
     with open('catalog3.py', 'w') as fp:
             json.dump(my_dict, fp)
     _catalog = FromFileCatalog.load_from_file("catalog3.py")

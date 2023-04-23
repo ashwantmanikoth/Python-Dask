@@ -8,6 +8,7 @@ class DaskQueryParser:
         self.query = None
         self.main_table = None
         self.cte = None
+        self.cte_params = None
         self.base = None
         self.iterative = None
         self.final = None
@@ -24,15 +25,23 @@ class DaskQueryParser:
                 self.is_iter = True
 
         if self.is_iter:
-            cte_pattern = r"(WITH RECURSIVE (.*?) \(.*?\) AS \()"
+            cte_pattern = r"(WITH RECURSIVE (.*?) \((.*?)\) AS \()"
             base_case_pattern = r"(\bSELECT\b.*\bFROM\b.*?)(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b)"
             recursive_case_pattern = r"(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b(.*)\))"
             final_query_pattern = r"(\)\n\b(SELECT\b.*))"
 
-            self.cte = re.search(cte_pattern, query, re.DOTALL | re.IGNORECASE).group(2)
+            cte_groups = re.search(cte_pattern, query, re.DOTALL | re.IGNORECASE)
+            self.cte = cte_groups.group(2)
+            self.cte_params = cte_groups.group(3).split(",")
+            for i in range(len(self.cte_params)):
+                self.cte_params[i] = self.cte + "_" + self.cte_params[i].strip()
+
             self.base = re.search(base_case_pattern, query, re.DOTALL | re.IGNORECASE).group(1) + ";"
             self.iterative = re.search(recursive_case_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
             self.final = re.search(final_query_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
+
+            self.iterative = self.iterative.replace(self.cte + ".", self.cte + "_", -1)
+            self.final = self.final.replace(self.cte + ".", self.cte + "_", -1)
 
         return self
 
