@@ -708,6 +708,12 @@ group by
 	"""
 
 sql_test = """select 
+WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
+  select l_orderkey, SUM(l_extendedprice) as cumulative_price
+  from lineitem
+  where l_orderkey = 1  -- Start with the first order key
+  union all
+  select 
     l_orderkey, 
     cumulative_extended_prices_cumulative_price + SUM(l_extendedprice) as cumulative_price
   from 
@@ -716,6 +722,8 @@ sql_test = """select
   l_orderkey = l_orderkey + 1
   group by
     l_orderkey;
+)
+select l_orderkey from cumulative_extended_prices;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
