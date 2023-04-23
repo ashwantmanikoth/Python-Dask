@@ -705,14 +705,14 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """SELECT 
+sql_test = """select 
     l.l_orderkey, 
-    c.cumulative_price + SUM(l.l_extendedprice) as cumulative_price
-  FROM 
-    lineitem l
-    JOIN lineitem c ON l.l_orderkey = c.l_orderkey + 1
-  WHERE 
-    l.l_orderkey <= 10  -- Set the maximum order key to compute the cumulative price
+    SUM(l.l_extendedprice) as cumulative_price
+  from 
+    lineitem l, lineitem c
+  where 
+    l.l_orderkey = c.l_orderkey + 1 AND
+    l.l_orderkey <= 10
   GROUP BY 
     l.l_orderkey, c.cumulative_price;
 	"""
