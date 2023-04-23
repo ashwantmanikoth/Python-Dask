@@ -713,7 +713,7 @@ sql_test = """select
   where 
     l.l_orderkey = c.l_orderkey + 1 and
     l.l_orderkey <= 10
-  GROUP BY 
+  group by 
     l.l_orderkey;
 	"""
 
