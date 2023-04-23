@@ -711,7 +711,7 @@ sql_test = """select
   from 
     lineitem l, lineitem c
   where 
-    l.l_orderkey = c.l_orderkey + 1 AND
+    l.l_orderkey = c.l_orderkey + 1 and
     l.l_orderkey <= 10
   GROUP BY 
     l.l_orderkey, c.cumulative_price;
