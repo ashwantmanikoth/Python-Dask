@@ -711,7 +711,7 @@ sql_test = """select
     l_orderkey, 
     cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
   from 
-    lineitem, lineitem
+    lineitem, orders
       where
   l_orderkey = l_orderkey + 1
   group by
