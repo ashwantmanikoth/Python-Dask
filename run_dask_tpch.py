@@ -715,7 +715,7 @@ sql_test = """WITH RECURSIVE orders_tree (orderkey, orderdate, totalprice, lvl) 
   WHERE o_orderkey = orders_tree.orderkey + 1
     AND orders_tree.lvl < 10
 )
-SELECT * FROM orders_tree;;
+SELECT orders_tree.orderkey, orders_tree.orderdate, orders_tree.totalprice, orders_tree.lvl FROM orders_tree;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
