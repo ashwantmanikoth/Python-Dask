@@ -713,7 +713,7 @@ sql_test = """select
   from 
     lineitem, cumulative_extended_prices
       where
-  l_orderkey = cl_orderkey + 1 AND l_orderkey <= 10
+  l_orderkey = l_orderkey + 1
   group by
     l_orderkey;
 	"""
