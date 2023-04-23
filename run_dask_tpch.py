@@ -581,10 +581,8 @@ where
     	and o_orderdate >= date '1995-01-01'
     	and o_orderdate < date '1995-01-01' + interval '1' year
 group by
-    n_name
-order by
-	revenue desc
-limit 5;"""
+    n_name;
+"""
 
 sql6= """select
     l_discount,
