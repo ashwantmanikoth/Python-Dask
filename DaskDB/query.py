@@ -153,8 +153,10 @@ def get_query_plan(sql, udf_list, query_context):
         p = []
         if query_context.is_iterative() and query_context.cte == alias:
             use_cols[string] = query_context.cte_params
-            for item in query_context.cte_params:
-                p.append((item, 'STRING_TYPE'))
+            p.append((query_context.cte_params[0], 'STRING_TYPE'))
+            p.append((query_context.cte_params[1], 'LONG_TYPE'))
+            #for item in query_context.cte_params:
+            #    p.append((item, 'STRING_TYPE'))
         else:
             df = get_dataframe(alias)
             #exec(df_read_string)
