@@ -152,6 +152,8 @@ def get_query_plan(sql, udf_list, query_context):
         if query_context.is_iterative() and query_context.cte == alias:
             alias = query_context.main_table
 
+        print("Alias = ")
+        print(alias)
         df = get_dataframe(alias)
         #exec(df_read_string)
 
@@ -201,6 +203,7 @@ def get_query_plan(sql, udf_list, query_context):
             """out = """ + sql + """
             store(out, OUTPUT);
             """)
+    exit(99)
     processor = interpreter.StatementProcessor(_catalog, True)
     processor.evaluate(statement_list)
     plan = processor.get_json()
