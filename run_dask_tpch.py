@@ -554,10 +554,8 @@ where
     and o_orderdate >= date '1995-01-01'
     and o_orderdate < date '1995-01-01' + interval '1' year
 group by
-    n_name
-order by
-    revenue desc
-limit 1;"""
+    n_name;
+"""
 
 
 sql5a = """select
@@ -581,8 +579,10 @@ where
     	and o_orderdate >= date '1995-01-01'
     	and o_orderdate < date '1995-01-01' + interval '1' year
 group by
-    n_name;
-"""
+    n_name
+order by
+	revenue desc
+limit 5;"""
 
 sql6= """select
     l_discount,
