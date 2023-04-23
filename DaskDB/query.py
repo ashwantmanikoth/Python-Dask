@@ -154,7 +154,9 @@ def get_query_plan(sql, udf_list, query_context):
         if query_context.is_iterative() and query_context.cte == alias:
             use_cols[string] = query_context.cte_params
             p.append((query_context.cte_params[0], 'LONG_TYPE'))
-            p.append((query_context.cte_params[1], 'DOUBLE_TYPE'))
+            p.append((query_context.cte_params[1], 'DATETIME_TYPE'))
+            p.append((query_context.cte_params[2], 'DOUBLE_TYPE'))
+            p.append((query_context.cte_params[3], 'LONG_TYPE'))
             #for item in query_context.cte_params:
             #    p.append((item, 'STRING_TYPE'))
         else:
