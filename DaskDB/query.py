@@ -84,7 +84,8 @@ def get_dataframe(alias):
     elif alias == 'region':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_region);
     else:
-        return None
+        # TODO: revert
+        return dd.read_csv('data/'+alias+".csv",delimiter="|",names=col_names_lineitem, parse_dates=[10,11,12]);
 
     return df
 
