@@ -149,6 +149,9 @@ def get_query_plan(sql, udf_list, query_context):
         #print (string_main)
         alias=string
 
+        if query_context.is_iterative() and query_context.cte == alias:
+            alias = query_context.main_table
+
         df = get_dataframe(alias)
         #exec(df_read_string)
 
