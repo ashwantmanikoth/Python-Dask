@@ -711,7 +711,7 @@ sql_test = """select
     l_orderkey, 
     SUM(l_extendedprice)
   from 
-    lineitem, orders
+    lineitem, orderss
       where
   l_orderkey = l_orderkey + 1
   group by
