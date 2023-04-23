@@ -318,8 +318,8 @@ def query(sql,scale_factor='1'):
     #print "physical plan:", phys
     dask_plan = phys.init(plan)
     #print "dask plan:", dask_plan
-    da_pl.only_use_columns(used_columns[0],scale_factor)
-    df = da_pl.convert_to_dask_code(dask_plan[0])
+    da_pl.only_use_columns(used_columns,scale_factor)
+    df = da_pl.convert_to_dask_code(dask_plan)
     #dli.clear_data_from_workers()
     return df
 
