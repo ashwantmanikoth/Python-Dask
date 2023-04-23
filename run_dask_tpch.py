@@ -698,19 +698,22 @@ order by
 limit 10;
 	"""
 
-sql_test = """WITH RECURSIVE store_tree (storename, city, region, revenue, lvl) AS (
-SELECT c_name, c_city, n_regionname, o_totalprice, 1
-FROM customer, orders, nation
-WHERE c_custkey = o_custkey AND o_orderstatus = 'F' AND c_nationkey = n_nationkey AND c_custkey = 1
+sql_test = """WITH RECURSIVE cte_customer_tree (cte_customer_name, cte_revenue, cte_lvl) AS (
+SELECT c_name, o_totalprice, 1
+FROM customer, orders
+WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING'
 
 UNION ALL
 
-SELECT c_name, c_city, n_regionname, store_tree.revenue + o_totalprice, store_tree.lvl + 1
-FROM customer, orders, nation, store_tree
-WHERE c_custkey = o_custkey AND o_orderstatus = 'F' AND c_nationkey = n_nationkey AND c_name = store_tree.storename
-AND store_tree.lvl < 3
+SELECT c_name, cte_revenue + o_totalprice, cte_lvl + 1
+FROM customer, orders, cte_customer_tree
+WHERE c_custkey = o_custkey AND c_name = cte_customer_name
+AND cte_lvl < 2
 )
-SELECT store_tree.storename, store_tree.city, store_tree.region, store_tree.revenue, store_tree.lvl FROM store_tree;
+
+SELECT cte_customer_name, SUM(cte_revenue) AS total_revenue
+FROM cte_customer_tree
+GROUP BY cte_customer_name;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (

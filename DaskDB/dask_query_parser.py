@@ -8,11 +8,11 @@ class DaskQueryParser:
         self.query = None
         self.main_table = None
         self.cte = None
-        self.cte_params = None
         self.base = None
         self.iterative = None
         self.final = None
         self.is_iter = False
+        self.cte_params = []
 
     def parse(self, query):
         self.query = query
@@ -34,9 +34,7 @@ class DaskQueryParser:
             self.cte = cte_groups.group(2)
             self.cte_params = cte_groups.group(3).split(",")
             for i in range(len(self.cte_params)):
-                self.cte_params[i] = self.cte + "_" + self.cte_params[i].strip()
-
-            self.query = self.query.replace(self.cte + ".", self.cte + "_", -1)
+                self.cte_params[i] = self.cte_params[i].strip()
 
             self.base = re.search(base_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(1) + ";"
             self.iterative = re.search(recursive_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
