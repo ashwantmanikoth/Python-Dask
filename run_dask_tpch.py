@@ -723,7 +723,7 @@ sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_
   group by
     l_orderkey, cumulative_extended_prices.cumulative_price;
 )
-select l_orderkey from cumulative_extended_prices;
+select cumulative_extended_prices.l_orderkey from cumulative_extended_prices;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
