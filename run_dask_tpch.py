@@ -706,8 +706,8 @@ sql_test = """WITH RECURSIVE orders_tree (orderkey, orderdate, totalprice, lvl) 
   UNION ALL
 
   SELECT o_orderkey, o_orderdate, o_totalprice, orders_tree.lvl + 1
-  FROM orders, orders_tree
-  WHERE o_orderkey = orders_tree.orderkey + 1
+  FROM orders, orders_tree, customer
+  WHERE o_orderkey = orders_tree.orderkey + 1 and c_custkey = o_custkey
     AND orders_tree.lvl < 10
 )
 SELECT orders_tree.orderkey, orders_tree.orderdate, orders_tree.totalprice, orders_tree.lvl FROM orders_tree;
