@@ -708,17 +708,17 @@ group by
 	"""
 
 sql_test = """select
-	l.l_orderkey,
-	l.l_shipdate,
-	c.c_custkey
+    c_name
 from
-	customer c,
-	orders o,
-	lineitem l
+    customer,
+    orders
 where
-	c.c_custkey = o.o_custkey
-	and l.l_orderkey = o.o_orderkey
-limit 10;
+    c_custkey = o_custkey
+    and o_orderdate >= date '1995-01-01'
+    and o_orderdate < date '1995-01-01' + interval '1' year
+group by
+    c_name
+limit 1;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey

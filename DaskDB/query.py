@@ -65,6 +65,7 @@ def getPlan(sql, udf_list):
     #else :
     plan,used_columns=getNormalPlan(sql, udf_list)
     return plan,used_columns
+
 def get_dataframe(alias):
     if alias == 'lineitem':
         df = dd.read_csv('data/'+alias+".csv",delimiter="|",names=col_names_lineitem, parse_dates=[10,11,12]);
