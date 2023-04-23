@@ -678,34 +678,44 @@ order by
 	revenue desc
 limit 5;"""
 
-sql_testxx = """select
-	l_orderkey,
-	sum(l_extendedprice * (1 - l_discount)) as revenue
+sql_test_xx = """select
+    l_orderkey,
+    sum(l_extendedprice * (1 - l_discount)) as revenue,
+    o_orderdate,
+    o_shippriority
 from
-	orders,
-	lineitem
+    orders,
+    customer,
+    lineitem
 where
-	l_orderkey = o_orderkey
-	and o_orderdate >= date '1995-01-01'
+    c_mktsegment = 'HOUSEHOLD'
+    and c_custkey = o_custkey
+    and l_orderkey = o_orderkey
+    and o_orderdate < date '1995-03-21'
+    and l_shipdate > date '1995-03-21'
 group by
-	l_orderkey
+    l_orderkey,
+    o_orderdate,
+    o_shippriority
 order by
-	revenue
-limit 5;"""
-
-sql_test_working = """select
-	SUM(l_quantity),
-	l_orderkey
-from
-	lineitem
-where
-	l_shipdate >= date '1994-01-01'
-	AND l_shipdate < date '1995-01-01'
-group by
-	l_orderkey;
+    revenue desc,
+    o_orderdate
+limit 10;
 	"""
 
-sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
+sql_test = """select 
+    l_orderkey, 
+    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
+  from 
+    lineitem, cumulative_extended_prices
+  where
+  l_orderkey = cumulative_extended_prices.l_orderkey + 1
+  and l_orderkey < 25
+  group by
+    l_orderkey, cumulative_extended_prices.cumulative_price;
+	"""
+
+yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
   select l_orderkey, SUM(l_extendedprice) as cumulative_price
   from lineitem
   where l_orderkey = 1
@@ -715,7 +725,7 @@ sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_
     cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
   from 
     lineitem, cumulative_extended_prices
-      where
+  where
   l_orderkey = cumulative_extended_prices.l_orderkey + 1
   and l_orderkey < 25
   group by
