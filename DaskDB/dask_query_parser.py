@@ -29,10 +29,10 @@ class DaskQueryParser:
             recursive_case_pattern = r"(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b(.*)\))"
             final_query_pattern = r"(\)\n\b(SELECT\b.*))"
 
-            self.cte = re.search(cte_pattern, query, re.DOTALL).group(2)
-            self.base = re.search(base_case_pattern, query, re.DOTALL).group(1) + ";"
-            self.iterative = re.search(recursive_case_pattern, query, re.DOTALL).group(2) + ";"
-            self.final = re.search(final_query_pattern, query, re.DOTALL).group(2) + ";"
+            self.cte = re.search(cte_pattern, query, re.DOTALL | re.IGNORECASE).group(2)
+            self.base = re.search(base_case_pattern, query, re.DOTALL | re.IGNORECASE).group(1) + ";"
+            self.iterative = re.search(recursive_case_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
+            self.final = re.search(final_query_pattern, query, re.DOTALL | re.IGNORECASE).group(2) + ";"
 
         return self
 
