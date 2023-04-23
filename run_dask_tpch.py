@@ -709,7 +709,7 @@ group by
 
 sql_test = """select 
     l_orderkey, 
-    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice)
+    cumulative_extended_prices_cumulative_price + SUM(l_extendedprice)
   from 
     lineitem, cumulative_extended_prices
       where
