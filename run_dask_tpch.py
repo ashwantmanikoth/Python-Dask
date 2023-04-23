@@ -705,14 +705,14 @@ limit 10;
 
 sql_test = """select 
     l_orderkey, 
-    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
+    SUM(l_extendedprice) as cumulative_price
   from 
     lineitem, cumulative_extended_prices
   where
   l_orderkey = cumulative_extended_prices.l_orderkey + 1
   and l_orderkey < 25
   group by
-    l_orderkey, cumulative_extended_prices.cumulative_price;
+    l_orderkey;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
