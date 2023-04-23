@@ -3,6 +3,7 @@
 import raco.myrial.parser as parser
 import raco.myrial.interpreter as interpreter
 import raco.backends.myria as alg
+from DaskDB.iterative_query_parser import DaskQueryParser
 from raco.expression.expression import UnnamedAttributeRef
 from raco.catalog import FromFileCatalog
 import dask.dataframe as dd
@@ -88,6 +89,33 @@ def get_dataframe(alias):
 
 
 def getNormalPlan(sql, udf_list):
+    plan = []
+    use_cols = []
+    query_context = DaskQueryParser().parse(sql)
+    if query_context.is_iterative():
+        base = query_context.base
+        recursive = query_context.iterative
+        final = query_context.final
+
+        sub_plan, sub_cols = get_query_plan(base, udf_list, query_context)
+        plan.append(sub_plan)
+        use_cols.append(sub_cols)
+
+        sub_plan, sub_cols = get_query_plan(recursive, udf_list, query_context)
+        plan.append(sub_plan)
+        use_cols.append(sub_cols)
+
+        sub_plan, sub_cols = get_query_plan(final, udf_list, query_context)
+        plan.append(sub_plan)
+        use_cols.append(sub_cols)
+    else:
+        sub_plan, sub_cols = get_query_plan(sql, udf_list, query_context)
+        plan.append(sub_plan)
+        use_cols.append(sub_cols)
+
+    return plan, use_cols
+
+def get_query_plan(sql, udf_list, query_context):
     my_dict={}
     sql_re = sql
     if 'limit' in sql:
