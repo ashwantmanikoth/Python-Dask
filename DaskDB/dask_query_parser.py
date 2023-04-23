@@ -27,7 +27,7 @@ class DaskQueryParser:
         if self.is_iter:
             cte_pattern = r"(WITH RECURSIVE (.*?) \((.*?)\) AS \()"
             base_case_pattern = r"(\bSELECT\b.*\bFROM\b.*?)(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b)"
-            recursive_case_pattern = r"(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b(.*)\))"
+            recursive_case_pattern = r"(\b(?:UNION ALL|UNION|INTERSECT|EXCEPT)\b(.*)\).*?SELECT)"
             final_query_pattern = r"(\)\n\b(SELECT\b.*))"
 
             cte_groups = re.search(cte_pattern, query, re.DOTALL | re.IGNORECASE)
