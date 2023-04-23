@@ -707,18 +707,15 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select
-    c_name
-from
-    customer,
-    orders
-where
-    c_custkey = o_custkey
-    and o_orderdate >= date '1995-01-01'
-    and o_orderdate < date '1995-01-01' + interval '1' year
-group by
-    c_name
-limit 1;
+sql_test = """select 
+    l_orderkey, 
+    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
+  from 
+    lineitem, cumulative_extended_prices
+      where
+  l_orderkey = cl_orderkey + 1 AND l_orderkey <= 10
+  group by
+    l_orderkey;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
