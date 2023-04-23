@@ -707,8 +707,7 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select 
-WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
+sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
   select l_orderkey, SUM(l_extendedprice) as cumulative_price
   from lineitem
   where l_orderkey = 1  -- Start with the first order key
