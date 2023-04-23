@@ -703,23 +703,19 @@ order by
 limit 10;
 	"""
 
-sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
-  select l_orderkey, SUM(l_extendedprice) as cumulative_price
-  from lineitem
-  where l_orderkey = 1
-  union all
-  select 
-    l_orderkey, 
-    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
-  from 
-    lineitem, cumulative_extended_prices
-  where
-  l_orderkey = cumulative_extended_prices.l_orderkey + 1
-  and l_orderkey < 25
-  group by
-    l_orderkey, cumulative_extended_prices.cumulative_price;
+sql_test = """WITH RECURSIVE orders_tree(orderkey, orderdate, totalprice, level) AS (
+  SELECT orderkey, orderdate, totalprice, 1
+  FROM orders
+  WHERE orderkey = 1
+
+  UNION ALL
+
+  SELECT orderkey, orderdate, totalprice, orders_tree.level + 1
+  FROM orders o, orders_tree
+  WHERE orderkey = orders_tree.orderkey + 1
+    AND orders_tree.level < 10
 )
-select cumulative_extended_prices.l_orderkey from cumulative_extended_prices;
+SELECT * FROM orders_tree;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
