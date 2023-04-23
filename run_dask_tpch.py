@@ -710,12 +710,11 @@ group by
 sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
   select l_orderkey, SUM(l_extendedprice) as cumulative_price
   from lineitem
-  where l_orderkey = 1  -- Start with the first order key
+  where l_orderkey = 1
   union all
   select 
     l_orderkey, 
     cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
-    -- GET base query columns map it with recursive query columns in same order
   from 
     lineitem, cumulative_extended_prices
       where
