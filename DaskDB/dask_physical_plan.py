@@ -3,7 +3,13 @@ class PhysicalPlan:
     id_to_table_mappings = {}
     mt_count = 0;
     
-    def init(self,plan):
+    def init(self, query_plan):
+        dask_plan = []
+        for plan in query_plan:
+            dask_plan.append(self.init_plan(plan))
+        return dask_plan
+
+    def init_plan(self, plan):
         mpp = plan
         dask_plan = {}
         dask_plan['operators'] = {}
