@@ -705,16 +705,16 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select
-	SUM(l.l_quantity),
-	l.l_orderkey
-from
-	lineitem l
-where
-	l.l_shipdate >= date '1994-01-01'
-	AND l.l_shipdate < date '1995-01-01'
-group by
-	l.l_orderkey;
+sql_test = """SELECT 
+    l.l_orderkey, 
+    c.cumulative_price + SUM(l.l_extendedprice) as cumulative_price
+  FROM 
+    lineitem l
+    JOIN lineitem c ON l.l_orderkey = c.l_orderkey + 1
+  WHERE 
+    l.l_orderkey <= 10  -- Set the maximum order key to compute the cumulative price
+  GROUP BY 
+    l.l_orderkey, c.cumulative_price;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey

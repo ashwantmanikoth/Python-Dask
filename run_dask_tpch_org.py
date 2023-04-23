@@ -675,16 +675,20 @@ order by
 	revenue desc
 limit 5;"""
 
-sql_test = """  SELECT 
-    l.l_orderkey, 
-    c.cumulative_price + SUM(l.l_extendedprice) as cumulative_price
-  FROM 
-    lineitem l
-    JOIN lineitem c ON l.l_orderkey = c.l_orderkey + 1
-  WHERE 
-    l.l_orderkey <= 10  -- Set the maximum order key to compute the cumulative price
-  GROUP BY 
-    l.l_orderkey, c.cumulative_price;"""
+sql_test = """select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue
+from
+	orders,
+	lineitem
+where
+	l_orderkey = o_orderkey
+	and o_orderdate >= date '1995-01-01'
+group by
+	l_orderkey
+order by
+	revenue
+limit 5;"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from
