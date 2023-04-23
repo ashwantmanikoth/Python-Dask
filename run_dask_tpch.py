@@ -700,8 +700,8 @@ limit 10;
 
 sql_test = """WITH RECURSIVE orders_tree (orderkey, orderdate, totalprice, lvl) AS (
   SELECT o_orderkey, o_orderdate, o_totalprice, 1
-  FROM orders
-  WHERE o_orderkey = 1
+  FROM orders, customer
+  WHERE o_orderkey = 1 and c_custkey = o_custkey
 
   UNION ALL
 
