@@ -703,19 +703,19 @@ order by
 limit 10;
 	"""
 
-sql_test = """WITH RECURSIVE orders_tree(orderkey, orderdate, totalprice, level) AS (
-  SELECT orderkey, orderdate, totalprice, 1
+sql_test = """WITH RECURSIVE orders_tree (orderkey, orderdate, totalprice, lvl) AS (
+  SELECT o_orderkey, o_orderdate, o_totalprice, 1
   FROM orders
-  WHERE orderkey = 1
+  WHERE o_orderkey = 1
 
   UNION ALL
 
-  SELECT orderkey, orderdate, totalprice, orders_tree.level + 1
-  FROM orders o, orders_tree
-  WHERE orderkey = orders_tree.orderkey + 1
-    AND orders_tree.level < 10
+  SELECT o_orderkey, o_orderdate, o_totalprice, orders_tree.lvl + 1
+  FROM orders, orders_tree
+  WHERE o_orderkey = orders_tree.orderkey + 1
+    AND orders_tree.lvl < 10
 )
-SELECT * FROM orders_tree;
+SELECT * FROM orders_tree;;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
