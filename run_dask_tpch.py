@@ -706,15 +706,15 @@ group by
 	"""
 
 sql_test = """select
-	SUM(l_quantity),
-	l_orderkey
+	SUM(l.l_quantity),
+	l.l_orderkey
 from
-	lineitem
+	lineitem l
 where
-	l_shipdate >= date '1994-01-01'
-	AND l_shipdate < date '1995-01-01'
+	l.l_shipdate >= date '1994-01-01'
+	AND l.l_shipdate < date '1995-01-01'
 group by
-	l_orderkey;
+	l.l_orderkey;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
