@@ -707,14 +707,14 @@ group by
 
 sql_test = """select 
     l.l_orderkey, 
-    SUM(l.l_extendedprice) as cumulative_price
+    sum(c.l_extendedprice) as cumulative_price
   from 
     lineitem l, lineitem c
   where 
     l.l_orderkey = c.l_orderkey + 1 and
     l.l_orderkey <= 10
   GROUP BY 
-    l.l_orderkey, c.cumulative_price;
+    l.l_orderkey;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
