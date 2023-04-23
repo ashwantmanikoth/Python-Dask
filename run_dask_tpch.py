@@ -705,16 +705,18 @@ group by
 	l_orderkey;
 	"""
 
-sql_test = """select 
-    l.l_orderkey, 
-    sum(c.l_extendedprice) as cumulative_price
-  from 
-    lineitem l, lineitem c
-  where 
-    l.l_orderkey = c.l_orderkey + 1 and
-    l.l_orderkey <= 10
-  group by 
-    l.l_orderkey;
+sql_test = """select
+	l.l_orderkey,
+	l.l_shipdate,
+	c.c_custkey
+from
+	customer c,
+	orders o,
+	lineitem l
+where
+	c.c_custkey = o.o_custkey
+	and l.l_orderkey = o.o_orderkey
+limit 10;
 	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
