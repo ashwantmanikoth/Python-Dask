@@ -857,7 +857,7 @@ elif query_number == 33:
 elif query_number == 55:
     for i in range(number_or_runs):
         start = timer()
-        query(sql5a,scale_factor)
+        print(query(sql5a,scale_factor))
         first = False
         end = timer()
         result += str(end-start) + "\n"
