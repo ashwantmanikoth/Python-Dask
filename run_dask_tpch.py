@@ -671,10 +671,31 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """select 
-    src, target, distance
-    from distances
-    where src = 1;
+sql5a = """WITH recursive paths(nation_id, path, dist) AS
+(
+       SELECT src  as nation_id,
+              name as path,
+              dist
+       FROM   distances,
+              countries
+       WHERE  source = 1
+       AND    source = id
+       UNION
+       SELECT target,
+                     concat(path, ',', name),
+              dist + distance
+       FROM   paths,
+              distances,
+              countries
+       WHERE  src = nation_id
+       AND    NOT concat(',', path, ',') LIKE concat('%,', name, ',%')
+       AND    target = id )
+SELECT   nation_id,
+         path,
+         dist
+FROM     paths
+WHERE    nation_id = 5
+ORDER BY dist limit 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
