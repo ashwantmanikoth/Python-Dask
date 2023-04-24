@@ -399,7 +399,7 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
             )
 
             result = iterative_query_processor.process_iterative_query()
-            final = result.compute
+            final = result.compute()
             print(final)
             return final
         else:
