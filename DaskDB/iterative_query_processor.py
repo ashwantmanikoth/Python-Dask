@@ -2,12 +2,16 @@ import re
 from typing import Callable
 
 import dask.dataframe as dd
+from DaskDB.dask_learned_index import create_index_and_distribute_data, merge_tables, \
+    is_good_to_create_db_index_on_column
+from DaskDB.setup_configuration import get_hdfs_master_node_IP, get_hdfs_master_node_port
 
 
 class IterativeQueryProcessor:
     column_mappings = {}
 
-    def __init__(self, base_code_block, iterative_code_block, final_code_block, **dataframes):
+    def __init__(self, client, base_code_block, iterative_code_block, final_code_block, **dataframes):
+        self.client = client
         self.dataframes = dataframes
         cte_name_match = re.search(r'(\w+)\s*=\s*\w+\s*\.\w+\s*\(\s*\)$', final_code_block, flags=re.MULTILINE)
         if cte_name_match:
@@ -46,16 +50,16 @@ class IterativeQueryProcessor:
         final_query: Callable = getattr(self, "final_query")
 
         for key, value in self.dataframes.items(): exec(f"{key} = value", globals(), locals())
-        cte_customer_tree = base_query(self, **self.dataframes)
+        cte_customer_tree = base_query(self)
         iteration = 0
         while True:
-            new_cte_customer_tree = recursive_query(self, cte_customer_tree, **self.dataframes)
+            new_cte_customer_tree = recursive_query(self, cte_customer_tree)
             if new_cte_customer_tree.empty or iteration >= max_iterations:
                 break
 
             cte_customer_tree = dd.concat([cte_customer_tree, new_cte_customer_tree])
             iteration += 1
-        return final_query(self, cte_customer_tree, **self.dataframes)
+        return final_query(self, cte_customer_tree)
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns

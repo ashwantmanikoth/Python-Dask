@@ -395,7 +395,7 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
             }
 
             iterative_query_processor = IterativeQueryProcessor(
-                base_code_block, iterative_code_block, final_query_block, **dataframes
+                self.client, base_code_block, iterative_code_block, final_query_block, **dataframes
             )
 
             result = iterative_query_processor.process_iterative_query()
