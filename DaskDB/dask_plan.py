@@ -377,11 +377,11 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
     
     def convert_to_dask_code(self,dask_plan):
         print("#######PYTHON-CODE1########")
-        print(self.convert_plan(dask_plan[1]))
+        print(self.convert_plan(dask_plan[0]))
         print("#######PYTHON-CODE2########")
-        print(self.convert_plan(dask_plan[2]))
+        print(self.convert_plan(dask_plan[1]))
         print("#######PYTHON-CODE3########")
-        print(self.convert_plan(dask_plan[3]))
+        print(self.convert_plan(dask_plan[2]))
 
     def convert_plan(self, dask_plan):
         init_meth = """lineitem = self.lineitem
