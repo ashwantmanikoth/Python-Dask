@@ -693,7 +693,7 @@ AND cte_lvl < 2
 
 SELECT cte_custkey, cte_customer_name, SUM(cte_revenue) AS total_revenue
 FROM cte_customer_tree
-GROUP BY cte_custkey;
+GROUP BY cte_custkey, cte_customer_name;
 	"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
