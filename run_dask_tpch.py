@@ -678,8 +678,8 @@ sql5a = """WITH recursive paths(nation_id, path, dist) AS
               dist
        FROM   distances,
               countries
-       WHERE  source = 1
-       AND    source = id
+       WHERE  src = 1
+       AND    src = id
        UNION
        SELECT target,
                      concat(path, ',', name),
