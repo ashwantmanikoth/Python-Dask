@@ -22,6 +22,8 @@ col_region = None
 col_part = None
 col_supplier = None
 col_partsupp = None
+col_countries = None
+col_distances = None
 
 partition_size = "32MB"
 
@@ -67,6 +69,10 @@ def get_column_name_from_relations(relName, colPos):
         return col_supplier[colPos]
     if relName == 'partsupp':
         return col_partsupp[colPos]
+    if relName == 'countries':
+        return col_countries[colPos]
+    if relName == 'distances':
+        return col_distances[colPos]
     return ""
 
     
