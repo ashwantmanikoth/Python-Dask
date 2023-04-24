@@ -92,7 +92,7 @@ def get_dataframe(alias):
 
 def getNormalPlan(sql, udf_list):
     plan = []
-    use_cols = []
+    use_cols = dict()
     query_context = DaskQueryParser().parse(sql)
     if query_context.is_iterative():
         base = query_context.base
@@ -101,19 +101,18 @@ def getNormalPlan(sql, udf_list):
 
         sub_plan, sub_cols = get_query_plan(base, udf_list, query_context)
         plan.append(sub_plan)
-        use_cols.append(sub_cols)
+        use_cols.update(sub_cols)
 
         sub_plan, sub_cols = get_query_plan(recursive, udf_list, query_context)
         plan.append(sub_plan)
-        use_cols.append(sub_cols)
+        use_cols.update(sub_cols)
 
         sub_plan, sub_cols = get_query_plan(final, udf_list, query_context)
         plan.append(sub_plan)
-        use_cols.append(sub_cols)
+        use_cols.update(sub_cols)
     else:
-        sub_plan, sub_cols = get_query_plan(sql, udf_list, query_context)
+        sub_plan, use_cols = get_query_plan(sql, udf_list, query_context)
         plan.append(sub_plan)
-        use_cols.append(sub_cols)
 
     return plan, use_cols
 

@@ -108,7 +108,6 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         self.client = client 
         
     def only_use_columns(self,used_cols,scale_factor):
-        used_cols = used_cols[0]
         self.one_limit=False
         self.one_order_by = False
         col_headers = ""
