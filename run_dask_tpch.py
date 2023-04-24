@@ -671,7 +671,7 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT source as nation_id, name as path, dist
+sql5a = """SELECT source as nation_id, name as path, distance as dist
   FROM distances, countries
   WHERE source = 1
   AND source = id;
