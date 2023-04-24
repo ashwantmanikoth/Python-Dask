@@ -681,13 +681,13 @@ WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' limit 10;
 sql_test = """WITH RECURSIVE cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS (
 SELECT c_custkey as cte_custkey, c_name as cte_customer_name, o_totalprice as cte_revenue, 1 as cte_lvl
 FROM customer, orders
-WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' AND c_custkey < 5
+WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' AND c_custkey < 20
 
 UNION ALL
 
 SELECT c_custkey as cte_custkey, c_name as cte_customer_name, cte_revenue + o_totalprice as cte_revenue, cte_lvl + 1 as cte_lvl
 FROM customer, orders, cte_customer_tree
-WHERE c_custkey = o_custkey AND c_custkey = cte_custkey
+WHERE AND c_custkey < 20 AND c_custkey = o_custkey AND c_custkey = cte_custkey
 AND cte_lvl < 2
 )
 
