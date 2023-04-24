@@ -675,7 +675,7 @@ sql5a = """WITH recursive paths(nation_id, path, dist) AS
 (
        SELECT src  as nation_id,
               name as path,
-              dist
+              distance as dist
        FROM   distances,
               countries
        WHERE  src = 1
