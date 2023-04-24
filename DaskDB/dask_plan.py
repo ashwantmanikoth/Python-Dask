@@ -82,7 +82,9 @@ col_names_part = ['p_partkey','p_name','p_mfgr','p_brand','p_type','p_size','p_c
 col_names_supplier = ['s_suppkey','s_name','s_address','s_nationkey','s_phone','s_acctball','s_comment']
 col_names_partsupp = ['ps_partkey','ps_suppkey','ps_availqty','ps_supplycost','ps_comment']
 col_names_nation = ['n_nationkey','n_name','n_regionkey','n_comment']
-col_names_region = ['r_regionkey','r_name','r_comment']\n"""
+col_names_region = ['r_regionkey','r_name','r_comment']
+col_names_countries = ['id', 'name']
+col_names_distances = ['source', 'target', 'distance']\n"""
 
     linetiem_read = "lineitem = dd.read_csv('data/lineitem.csv',delimiter='|',names=col_names_lineitem, parse_dates=[10,11,12])\n"
     customer_read = "customer = dd.read_csv('data/customer.csv',delimiter='|',names=col_names_customer)\n"
@@ -92,6 +94,8 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
     partsupp_read = "partsupp = dd.read_csv('data/partsupp.csv',delimiter='|',names=col_names_partsupp)\n"
     nation_read = "nation = dd.read_csv('data/nation.csv',delimiter='|',names=col_names_nation)\n"
     region_read = "region = dd.read_csv('data/region.csv',delimiter='|',names=col_names_region)\n"
+    countries_read = "countries = dd.read_csv('data/countries.csv',delimiter='|',names=col_names_countries)\n"
+    distances_read = "distances = dd.read_csv('data/distances.csv',delimiter='|',names=col_names_distances)\n"
     #dask_ml = 'data_ml = dd.read_csv("data_ml/data_ml.csv")'
     init = column_headers + linetiem_read + customer_read  + orders_read + part_read + supplier_read + partsupp_read + nation_read + region_read 
     exec(init)
@@ -198,6 +202,22 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
                 region = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size,  names=self.col_names_region,usecols=use_cols_region)
                 set_table_size('region',region.npartitions)
                 self.region = create_index_and_distribute_data('region',region)
+
+            elif key=='countries':
+                use_cols_countries = values
+                #region = dd.read_csv('hdfs:///input/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size, storage_options={'host': self.hdfs_node, 'port': self.hdfs_port}, names=self.col_names_region,usecols=use_cols_region)
+                countries = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_'+scale_factor+'/countries.csv',delimiter='|', blocksize=partition_size,  names=self.col_names_countries,usecols=use_cols_countries)
+                set_table_size('countries',countries.npartitions)
+                self.countries = create_index_and_distribute_data('countries',countries)
+
+            elif key == 'distances':
+                use_cols_distances = values
+                # region = dd.read_csv('hdfs:///input/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size, storage_options={'host': self.hdfs_node, 'port': self.hdfs_port}, names=self.col_names_region,usecols=use_cols_region)
+                distances = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_' + scale_factor + '/distances.csv',
+                                     delimiter='|', blocksize=partition_size, names=self.col_names_distances,
+                                     usecols=use_cols_distances)
+                set_table_size('distances', distances.npartitions)
+                self.region = create_index_and_distribute_data('distances', distances)
                
         
     def create_filter_strings(self,data_table,task,offset):

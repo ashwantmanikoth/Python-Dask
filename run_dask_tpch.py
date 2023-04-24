@@ -671,9 +671,10 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT c_name as cte_customer_name, o_totalprice as cte_revenue, 1 as cte_lvl
-FROM customer, orders
-WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' limit 10;
+sql5a = """SELECT source, ARRAY[source], distance, name
+  FROM distances, countries
+  WHERE source = 1
+  AND source = id;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
