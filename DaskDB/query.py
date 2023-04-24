@@ -28,6 +28,8 @@ col_names_supplier = ['s_suppkey','s_name','s_address','s_nationkey','s_phone','
 col_names_partsupp = ['ps_partkey','ps_suppkey','ps_availqty','ps_supplycost','ps_comment']
 col_names_nation = ['n_nationkey','n_name','n_regionkey','n_comment']
 col_names_region = ['r_regionkey','r_name','r_comment']
+col_names_countries = ['id', 'name']
+col_names_distances = ['source', 'target', 'distance']
 is_fetch_data=False
 
 #skdas
@@ -83,6 +85,10 @@ def get_dataframe(alias):
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_nation);
     elif alias == 'region':
         df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_region);
+    elif alias == 'countries':
+        df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_countries);
+    elif alias == 'distances':
+        df = dd.read_csv('data/'+alias+'.csv',delimiter="|",names=col_names_distances);
     else:
         # TODO: revert
         return dd.read_csv('data/'+"lineitem"+".csv",delimiter="|",names=col_names_lineitem, parse_dates=[10,11,12]);
