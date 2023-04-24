@@ -795,7 +795,7 @@ elif query_number == 1:
         if i > 0:
             total_time += (end-start)
     number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    result += "Avg of warm runs : " + str(total_time/number_or_runs) + "\n\n"
 elif query_number == 3:
     for i in range(number_or_runs):
         start = timer()
