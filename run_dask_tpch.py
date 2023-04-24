@@ -671,26 +671,29 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive paths(nation_id, path, total) AS
+sql5a = """WITH recursive paths(origin, dest, path, total) AS
 (
-       SELECT src  as nation_id,
+       SELECT src  as origin,
+              target as dest,
               c_name as path,
               dist as total
-       FROM   distances,
-              countries
+       FROM   countries,
+              distances
        WHERE  src = 1
        AND    src = id
        UNION
-       SELECT target,
-                     concat(path, ',', c_name),
-              total + dist
+       SELECT src as origin, 
+              target as dest,
+              concat(path, ',', c_name) as path,
+              total + dist as total
        FROM   paths,
               distances,
               countries
        WHERE  src = nation_id
        AND    NOT concat(',', path, ',') LIKE concat('%,', c_name, ',%')
        AND    target = id )
-SELECT   nation_id,
+SELECT   origin,
+         dest,
          path,
          total
 FROM     paths
