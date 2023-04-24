@@ -671,10 +671,9 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT source as nation_id, name as path, distance as dist
-  FROM distances, countries
-  WHERE source = 1
-  AND source = id;
+sql5a = """SELECT source, target, distance
+  FROM distances
+  WHERE source = 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
