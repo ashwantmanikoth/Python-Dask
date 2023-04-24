@@ -674,7 +674,7 @@ limit 5;"""
 sql5a = """WITH recursive paths(nation_id, path, total) AS
 (
        SELECT src  as nation_id,
-              name as path,
+              c_name as path,
               dist as total
        FROM   distances,
               countries
@@ -682,13 +682,13 @@ sql5a = """WITH recursive paths(nation_id, path, total) AS
        AND    src = id
        UNION
        SELECT target,
-                     concat(path, ',', name),
+                     concat(path, ',', c_name),
               total + dist
        FROM   paths,
               distances,
               countries
        WHERE  src = nation_id
-       AND    NOT concat(',', path, ',') LIKE concat('%,', name, ',%')
+       AND    NOT concat(',', path, ',') LIKE concat('%,', c_name, ',%')
        AND    target = id )
 SELECT   nation_id,
          path,
