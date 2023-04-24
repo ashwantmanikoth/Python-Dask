@@ -672,9 +672,9 @@ order by
 limit 5;"""
 
 sql5a = """select 
-    source, target, distance
+    src, target, distance
     from distances
-    where source = 1;
+    where src = 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
