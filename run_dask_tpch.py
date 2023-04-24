@@ -687,7 +687,7 @@ UNION ALL
 
 SELECT c_custkey as cte_custkey, c_name as cte_customer_name, cte_revenue + o_totalprice as cte_revenue, cte_lvl + 1 as cte_lvl
 FROM customer, orders, cte_customer_tree
-WHERE AND c_custkey < 20 AND c_custkey = o_custkey AND c_custkey = cte_custkey
+WHERE c_custkey < 20 AND c_custkey = o_custkey AND c_custkey = cte_custkey
 AND cte_lvl < 2
 )
 
