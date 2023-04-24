@@ -85,7 +85,7 @@ class DaskPlan:
     one_order_by = False
     one_limit = False
     scale_factor='1'
-    tpch_list = ['lineitem','customer','orders','part','supplier','partsupp','nation','region']
+    tpch_list = ['lineitem','customer','orders','part','supplier','partsupp','nation','region', 'countries', 'distances']
     column_headers = """col_names_lineitem = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode', 'l_comment']
 col_names_customer = ['c_custkey','c_name','c_address','c_nationkey','c_phone','c_acctbal','c_mktsegment','c_comment']
 col_names_orders = ['o_orderkey','o_custkey','o_orderstatus','o_totalprice','o_orderdate','o_orderpriority','o_clerk','o_shippriority','o_comment']
