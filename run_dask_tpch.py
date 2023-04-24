@@ -673,7 +673,7 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT c_name, o_totalprice
+sql5a = """SELECT c_name, o_totalprice, 1
 FROM customer, orders
 WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING';
 """
