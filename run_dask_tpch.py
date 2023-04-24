@@ -678,23 +678,34 @@ FROM customer, orders
 WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' limit 10;
 """
 
-sql_test = """WITH RECURSIVE cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS (
-SELECT c_custkey as cte_custkey, c_name as cte_customer_name, o_totalprice as cte_revenue, 1 as cte_lvl
-FROM customer, orders
-WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' AND c_custkey = 1
-
-UNION ALL
-
-SELECT c_custkey as cte_custkey, c_name as cte_customer_name, cte_revenue + o_totalprice as cte_revenue, cte_lvl + 1 as cte_lvl
-FROM customer, orders, cte_customer_tree
-WHERE c_custkey = o_custkey AND c_custkey = cte_custkey
-AND cte_lvl < 2
-)
-
-SELECT cte_custkey, cte_customer_name, SUM(cte_revenue) AS total_revenue, MAX(cte_lvl) as max_level
-FROM cte_customer_tree
-GROUP BY cte_custkey, cte_customer_name;
-	"""
+sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
+(
+       SELECT c_custkey    AS cte_custkey,
+              c_name       AS cte_customer_name,
+              o_totalprice AS cte_revenue,
+              1            AS cte_lvl
+       FROM   customer,
+              orders
+       WHERE  c_custkey = o_custkey
+       AND    c_mktsegment = 'BUILDING'
+       AND    c_custkey = 1
+       UNION ALL
+       SELECT c_custkey                  AS cte_custkey,
+              c_name                     AS cte_customer_name,
+              cte_revenue + o_totalprice AS cte_revenue,
+              cte_lvl     + 1            AS cte_lvl
+       FROM   customer,
+              orders,
+              cte_customer_tree
+       WHERE  c_custkey = o_custkey
+       AND    c_custkey = cte_custkey
+       AND    cte_lvl < 2 )
+SELECT   cte_custkey,
+         cte_customer_name,
+         sum(cte_revenue) AS total_revenue
+FROM     cte_customer_tree
+GROUP BY cte_custkey,
+         cte_customer_name;"""
 
 yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
   select l_orderkey, SUM(l_extendedprice) as cumulative_price
