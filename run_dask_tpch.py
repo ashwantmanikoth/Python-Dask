@@ -310,8 +310,6 @@ dli.set_clean_data_func(clean_foreign_data)
 
 udf_list = []
 def query(sql,scale_factor='1'):
-    print("Hello Joseph")
-    print("Python version:", sys.version)
     plan,used_columns=qr.getPlan(sql, udf_list)
     #print "logical plan:", plan
     phys = dpp.PhysicalPlan()
@@ -796,6 +794,7 @@ elif query_number == 1:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
     result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
 elif query_number == 3:
     for i in range(number_or_runs):
