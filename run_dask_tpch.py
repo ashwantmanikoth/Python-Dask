@@ -671,9 +671,10 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT source, target, distance
-  FROM distances
-  WHERE source = 1;
+sql5a = """select 
+    source, target, distance
+    from distances
+    where source = 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
