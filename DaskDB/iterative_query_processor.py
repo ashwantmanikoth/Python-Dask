@@ -1,6 +1,7 @@
-import dask.dataframe as dd
 import re
 from typing import Callable
+
+import dask.dataframe as dd
 
 
 class IterativeQueryProcessor:
@@ -19,10 +20,13 @@ class IterativeQueryProcessor:
         self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
 
     def create_function(self, func_name, code_block, param_names):
-        func_header = f'def {func_name}(self, ' + ', '.join(param_names) + '):\n'
+        default_args = ', '.join([f'{key}=self.dataframes["{key}"]' for key in self.dataframes.keys()])
+        if len(param_names) > 0:
+            func_header = f'def {func_name}(self, ' + ', '.join(param_names) + ', ' + default_args + '):\n'
+        else:
+            func_header = f'def {func_name}(self, ' + default_args + '):\n'
 
         statements = code_block.splitlines(True)
-        statements.insert(0, 'locals().update(self.dataframes)')
 
         last_assignment_match = re.search(r'(\w+)\s*=\s*\w+\s*\.\w+\s*\(\s*\)$', code_block, flags=re.MULTILINE)
 
@@ -37,31 +41,21 @@ class IterativeQueryProcessor:
         setattr(self, func_name, locals()[func_name])
 
     def process_iterative_query(self, max_iterations=100):
-        # Add type hints for the dynamically created methods
         base_query: Callable = getattr(self, "base_query")
         recursive_query: Callable = getattr(self, "recursive_query")
         final_query: Callable = getattr(self, "final_query")
 
-        with self:
-            cte_customer_tree = base_query(self)
-            iteration = 0
-            while True:
-                new_cte_customer_tree = recursive_query(self, cte_customer_tree)
-                if new_cte_customer_tree.empty or iteration >= max_iterations:
-                    break
+        for key, value in self.dataframes.items(): exec(f"{key} = value", globals(), locals())
+        cte_customer_tree = base_query(self, **self.dataframes)
+        iteration = 0
+        while True:
+            new_cte_customer_tree = recursive_query(self, cte_customer_tree, **self.dataframes)
+            if new_cte_customer_tree.empty or iteration >= max_iterations:
+                break
 
-                cte_customer_tree = dd.concat([cte_customer_tree, new_cte_customer_tree])
-                iteration += 1
-            return final_query(self, cte_customer_tree)
+            cte_customer_tree = dd.concat([cte_customer_tree, new_cte_customer_tree])
+            iteration += 1
+        return final_query(self, cte_customer_tree, **self.dataframes)
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns
-
-    def __enter__(self):
-        for df_name, df in self.dataframes.items():
-            locals()[df_name] = df
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        return self
-
