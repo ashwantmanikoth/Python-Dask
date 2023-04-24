@@ -671,11 +671,11 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive paths(nation_id, path, dist) AS
+sql5a = """WITH recursive paths(nation_id, path, total) AS
 (
        SELECT src  as nation_id,
               name as path,
-              d as dist
+              dist as total
        FROM   distances,
               countries
        WHERE  src = 1
@@ -683,7 +683,7 @@ sql5a = """WITH recursive paths(nation_id, path, dist) AS
        UNION
        SELECT target,
                      concat(path, ',', name),
-              dist + d
+              total + dist
        FROM   paths,
               distances,
               countries
@@ -692,10 +692,10 @@ sql5a = """WITH recursive paths(nation_id, path, dist) AS
        AND    target = id )
 SELECT   nation_id,
          path,
-         dist
+         total
 FROM     paths
 WHERE    nation_id = 5
-ORDER BY dist limit 1;
+ORDER BY total limit 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
