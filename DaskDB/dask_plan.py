@@ -417,7 +417,9 @@ col_names_distances = ['source', 'target', 'distance']\n"""
                 "partsupp": self.partsupp,
                 "nation": self.nation,
                 "region": self.region,
-                "supplier": self.supplier
+                "supplier": self.supplier,
+                "countries": self.countries,
+                "distances": self.distances
             }
 
             iterative_query_processor = IterativeQueryProcessor(
@@ -437,6 +439,8 @@ partsupp = self.partsupp
 nation = self.nation
 region = self.region
 supplier = self.supplier
+countries = self.countries
+distances = self.distances
             """
             exec(init_meth)
             exec(code_block)
