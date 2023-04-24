@@ -945,6 +945,7 @@ f.close()
 
 
 end1 = time.time()
-print ("Avg of warm runs : " + str(total_time/(number_or_runs - 1)))
+number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+print ("Avg of warm runs : " + str(total_time/number_or_runs))
 
 
