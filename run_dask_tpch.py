@@ -783,7 +783,8 @@ if query_number == 0:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 1:
     for i in range(number_or_runs):
         start = timer()
@@ -807,7 +808,8 @@ elif query_number == 3:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 5:
     for i in range(number_or_runs):
         start = timer()
@@ -819,7 +821,8 @@ elif query_number == 5:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 6:
     for i in range(number_or_runs):
         start = timer()
@@ -830,7 +833,8 @@ elif query_number == 6:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 10:
     for i in range(number_or_runs):
         start = timer()
@@ -841,7 +845,8 @@ elif query_number == 10:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 11:
     for i in range(number_or_runs):
         start = timer()
@@ -852,7 +857,8 @@ elif query_number == 11:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 33:
     for i in range(number_or_runs):
         start = timer()
@@ -863,7 +869,8 @@ elif query_number == 33:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 55:
     for i in range(number_or_runs):
         start = timer()
@@ -874,7 +881,8 @@ elif query_number == 55:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 56:
     for i in range(number_or_runs):
         print('Executing benchmark query')
@@ -886,7 +894,8 @@ elif query_number == 56:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 101:
     result += "Linear Regression\n"
     for i in range(number_or_runs):
@@ -898,7 +907,8 @@ elif query_number == 101:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 102:
     result += "K-Means\n"
     for i in range(number_or_runs):
@@ -910,7 +920,8 @@ elif query_number == 102:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 103:
     result += "Quantiles\n"
     for i in range(number_or_runs):
@@ -922,7 +933,8 @@ elif query_number == 103:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 elif query_number == 104:
     result += "Conjugate Gradient Optimization\n"
     for i in range(number_or_runs):
@@ -934,7 +946,8 @@ elif query_number == 104:
         print ("Run " + str(i+1) + " : " + str(end-start))
         if i > 0:
             total_time += (end-start)
-    result += "Avg of warm runs : " + str(total_time/(number_or_runs - 1)) + "\n\n"
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
 else:
     print('query number is not a valid option')
 
