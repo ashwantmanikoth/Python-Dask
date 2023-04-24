@@ -17,9 +17,9 @@ class DaskQueryParser:
     def parse(self, query):
         self.query = query
         tokens = sql_metadata.get_query_tokens(self.query)
-        if len(tokens) > 0 and "WITH" == tokens[0].value:
+        if len(tokens) > 0 and "WITH" == tokens[0].value.upper():
             # with CTE, but not iterative
-            if "RECURSIVE" == tokens[1].value:
+            if "RECURSIVE" == tokens[1].value.upper():
                 # CTE and iterative
                 self.main_table = sql_metadata.get_query_tables(self.query)[0].title().lower()
                 self.is_iter = True
