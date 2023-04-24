@@ -7,6 +7,8 @@ from timeit import default_timer as timer
 #from machine_learning_functions import log_regression,random_forest, k_means,lin_regress_fit,grid_search #sray
 # from pmlb import fetch_data, classification_dataset_names #sray
 from sklearn.model_selection import train_test_split
+
+from DaskDB.iterative_query_processor import IterativeQueryProcessor
 from DaskDB.table_information  import set_table_size, print_table_sizes, get_table_size,good_to_set_index,get_table_division,set_table_division
 #from dask_learned_index import write_relation_to_hdfs_and_create_sparse_index, read_relation_from_hdfs, merge_tables, is_good_to_create_db_index_on_column
 from DaskDB.dask_learned_index import create_index_and_distribute_data, merge_tables, is_good_to_create_db_index_on_column
@@ -376,12 +378,34 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         return  agg_string
     
     def convert_to_dask_code(self,dask_plan):
-        print("#######PYTHON-CODE1########")
-        print(self.convert_plan(dask_plan[0]))
-        print("#######PYTHON-CODE2########")
-        print(self.convert_plan(dask_plan[1]))
-        print("#######PYTHON-CODE3########")
-        print(self.convert_plan(dask_plan[2]))
+        if len(dask_plan) > 1:
+            base_code_block, _ = self.convert_plan(dask_plan[0])
+            iterative_code_block, _ = self.convert_plan(dask_plan[1])
+            final_query_block, _ = self.convert_plan(dask_plan[2])
+
+            dataframes = {
+                "lineitem": self.lineitem,
+                "customer": self.customer,
+                "orders": self.orders,
+                "part": self.part,
+                "partsupp": self.partsupp,
+                "nation": self.nation,
+                "region": self.region,
+                "supplier": self.supplier
+            }
+
+            iterative_query_processor = IterativeQueryProcessor(
+                base_code_block, iterative_code_block, final_query_block, **dataframes
+            )
+
+            result = iterative_query_processor.process_iterative_query()
+
+            print(result)
+            return result
+        else:
+            code_block, table = self.convert_plan(dask_plan[0])
+            exec(code_block)
+            return vars()[table]
 
     def convert_plan(self, dask_plan):
         init_meth = """lineitem = self.lineitem
@@ -575,7 +599,7 @@ supplier = self.supplier"""
        # print self.column_mappings
         #exec(code_to_execute)
         #return vars()[task['data_table']]
-        return code_to_execute
+        return code_to_execute, task['data_table']
     
     def call_udf_func(self, udf_name, ddf, param_pos_list, is_compute_invoked):
 #         if udf_name == 'LinearRegression':
