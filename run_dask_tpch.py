@@ -676,7 +676,7 @@ sql5a = """WITH recursive paths(origin, dest, path, total) AS
        SELECT src  as origin,
               target as dest,
               c_name as path,
-              dist as total
+              cost as total
        FROM   countries,
               distances
        WHERE  src = 1
@@ -685,7 +685,7 @@ sql5a = """WITH recursive paths(origin, dest, path, total) AS
        SELECT src as origin, 
               target as dest,
               concat(path, ',', c_name) as path,
-              total + dist as total
+              total + cost as total
        FROM   paths,
               distances,
               countries
