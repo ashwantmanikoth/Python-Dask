@@ -675,7 +675,7 @@ limit 5;"""
 
 sql5a = """SELECT c_name, o_totalprice, 1
 FROM customer, orders
-WHERE  c_mktsegment = 'BUILDING' limit 5;
+WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING' limit 10;
 """
 
 sql_test = """WITH RECURSIVE cte_customer_tree (cte_customer_name, cte_revenue, cte_lvl) AS (
