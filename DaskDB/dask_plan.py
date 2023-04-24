@@ -200,9 +200,6 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
                
         
     def create_filter_strings(self,data_table,task,offset):
-        if 'left' not in task or 'right' not in task:
-            return
-
         if task['left']['type'] == 'VARIABLE':
             left_arg = (data_table + '[' + 'self.column_mappings["' + data_table + '"][' 
             + str(task['left']['columnIdx']-offset) + ']]')
