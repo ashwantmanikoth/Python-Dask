@@ -376,15 +376,14 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         return  agg_string
     
     def convert_to_dask_code(self,dask_plan):
-        dask_plan = dask_plan[0]
-#         init_reln = ""
-#         for rel_name in relation_list:
-#             init_reln += rel_name + "=self." + rel_name +"\n"
-#              init_reln += rel_name + "=self." + rel_name + ".compute()\n"
-#              init_reln += "print " + rel_name +"\n"       
-#         print init_reln
-#         exec(init_reln)
-#        return
+        print("#######PYTHON-CODE1########")
+        print(self.convert_plan(dask_plan[1]))
+        print("#######PYTHON-CODE2########")
+        print(self.convert_plan(dask_plan[2]))
+        print("#######PYTHON-CODE3########")
+        print(self.convert_plan(dask_plan[3]))
+
+    def convert_plan(self, dask_plan):
         init_meth = """lineitem = self.lineitem
 customer = self.customer
 orders = self.orders
@@ -574,8 +573,9 @@ supplier = self.supplier"""
 
 #         print("TO EXECUTE:\n"+ code_to_execute)
        # print self.column_mappings
-        exec(code_to_execute)
-        return vars()[task['data_table']]
+        #exec(code_to_execute)
+        #return vars()[task['data_table']]
+        return code_to_execute
     
     def call_udf_func(self, udf_name, ddf, param_pos_list, is_compute_invoked):
 #         if udf_name == 'LinearRegression':
