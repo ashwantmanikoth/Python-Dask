@@ -659,7 +659,7 @@ order by
 	revenue desc
 limit 10;"""
 
-sql5a = """select
+xxxxsql5a = """select
 	l_extendedprice,
 	sum(l_extendedprice * (1 - l_discount)) as revenue
 from
@@ -673,30 +673,10 @@ order by
 	revenue desc
 limit 5;"""
 
-sql_test_xx = """select
-    l_orderkey,
-    sum(l_extendedprice * (1 - l_discount)) as revenue,
-    o_orderdate,
-    o_shippriority
-from
-    orders,
-    customer,
-    lineitem
-where
-    c_mktsegment = 'HOUSEHOLD'
-    and c_custkey = o_custkey
-    and l_orderkey = o_orderkey
-    and o_orderdate < date '1995-03-21'
-    and l_shipdate > date '1995-03-21'
-group by
-    l_orderkey,
-    o_orderdate,
-    o_shippriority
-order by
-    revenue desc,
-    o_orderdate
-limit 10;
-	"""
+sql5a = """SELECT c_name, o_totalprice, 1
+FROM customer, orders
+WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING';
+"""
 
 sql_test = """WITH RECURSIVE cte_customer_tree (cte_customer_name, cte_revenue, cte_lvl) AS (
 SELECT c_name, o_totalprice, 1
