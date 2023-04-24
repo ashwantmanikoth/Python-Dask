@@ -399,9 +399,9 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
             )
 
             result = iterative_query_processor.process_iterative_query()
-
-            print(result.compute())
-            return result
+            final = result.compute
+            print(final)
+            return final
         else:
             code_block, table = self.convert_plan(dask_plan[0])
             exec(code_block)
