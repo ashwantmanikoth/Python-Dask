@@ -26,7 +26,8 @@ col_partsupp = None
 partition_size = "32MB"
 
 def set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, col_names_part,
-                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region):
+                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region,
+                      col_names_countries, col_names_distances):
     global col_lineitem
     col_lineitem = col_names_lineitem 
     global col_customer
@@ -43,6 +44,10 @@ def set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, 
     col_supplier = col_names_supplier 
     global col_partsupp
     col_partsupp = col_names_partsupp
+    global col_countries
+    col_countries = col_names_countries
+    global col_distances
+    col_distances = col_names_distances
     
     
 def get_column_name_from_relations(relName, colPos):
@@ -97,7 +102,7 @@ col_names_distances = ['source', 'target', 'distance']\n"""
     countries_read = "countries = dd.read_csv('data/countries.csv',delimiter='|',names=col_names_countries)\n"
     distances_read = "distances = dd.read_csv('data/distances.csv',delimiter='|',names=col_names_distances)\n"
     #dask_ml = 'data_ml = dd.read_csv("data_ml/data_ml.csv")'
-    init = column_headers + linetiem_read + customer_read  + orders_read + part_read + supplier_read + partsupp_read + nation_read + region_read 
+    init = column_headers + linetiem_read + customer_read  + orders_read + part_read + supplier_read + partsupp_read + nation_read + region_read + countries_read + distances_read
     exec(init)
 	
     # sray skdas
@@ -123,6 +128,8 @@ col_names_distances = ['source', 'target', 'distance']\n"""
         partsupp_read=""
         region_read=""
         nation_read=""
+        countries_read=""
+        distances_read=""
         string = ""
         col_headers = ""
 
@@ -217,7 +224,7 @@ col_names_distances = ['source', 'target', 'distance']\n"""
                                      delimiter='|', blocksize=partition_size, names=self.col_names_distances,
                                      usecols=use_cols_distances)
                 set_table_size('distances', distances.npartitions)
-                self.region = create_index_and_distribute_data('distances', distances)
+                self.distances = create_index_and_distribute_data('distances', distances)
                
         
     def create_filter_strings(self,data_table,task,offset):

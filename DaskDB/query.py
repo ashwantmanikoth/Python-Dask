@@ -34,7 +34,8 @@ is_fetch_data=False
 
 #skdas
 dp.set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, col_names_part,
-                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region)
+                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region,
+                     col_names_countries, col_names_distances)
 
 # primary_key = {
 #     'orders' : 'o_orderkey',
