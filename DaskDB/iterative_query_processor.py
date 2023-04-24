@@ -36,6 +36,7 @@ class IterativeQueryProcessor:
 
         if last_assignment_match:
             return_var = last_assignment_match.group(1)
+            statements.pop()
             statements.append('return ' + return_var)
 
         indented_code = '    '.join(statements)
@@ -49,7 +50,6 @@ class IterativeQueryProcessor:
         recursive_query: Callable = getattr(self, "recursive_query")
         final_query: Callable = getattr(self, "final_query")
 
-        for key, value in self.dataframes.items(): exec(f"{key} = value", globals(), locals())
         cte_customer_tree = base_query(self)
         iteration = 0
         while True:
