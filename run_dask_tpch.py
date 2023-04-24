@@ -673,13 +673,13 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """SELECT c_name, o_totalprice, 1 as cte_lvl
+sql5a = """SELECT c_name, o_totalprice
 FROM customer, orders
 WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING';
 """
 
 sql_test = """WITH RECURSIVE cte_customer_tree (cte_customer_name, cte_revenue, cte_lvl) AS (
-SELECT c_name, o_totalprice
+SELECT c_name, o_totalprice, 1
 FROM customer, orders
 WHERE c_custkey = o_custkey AND c_mktsegment = 'BUILDING'
 
