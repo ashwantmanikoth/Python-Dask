@@ -51,6 +51,7 @@ class IterativeQueryProcessor:
         final_query: Callable = getattr(self, "final_query")
 
         cte_customer_tree = base_query(self)
+        print(cte_customer_tree.dtypes)
         iteration = 0
         while True:
             new_cte_customer_tree = recursive_query(self, cte_customer_tree)
