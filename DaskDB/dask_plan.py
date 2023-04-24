@@ -95,7 +95,7 @@ col_names_partsupp = ['ps_partkey','ps_suppkey','ps_availqty','ps_supplycost','p
 col_names_nation = ['n_nationkey','n_name','n_regionkey','n_comment']
 col_names_region = ['r_regionkey','r_name','r_comment']
 col_names_countries = ['id', 'name']
-col_names_distances = ['src', 'target', 'distance']\n"""
+col_names_distances = ['src', 'target', 'd']\n"""
 
     linetiem_read = "lineitem = dd.read_csv('data/lineitem.csv',delimiter='|',names=col_names_lineitem, parse_dates=[10,11,12])\n"
     customer_read = "customer = dd.read_csv('data/customer.csv',delimiter='|',names=col_names_customer)\n"
