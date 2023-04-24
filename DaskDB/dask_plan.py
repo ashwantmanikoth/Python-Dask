@@ -403,14 +403,14 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         else:
             code_block, table = self.convert_plan(dask_plan[0])
             init_meth = """
-                lineitem = self.lineitem
-                customer = self.customer
-                orders = self.orders
-                part = self.part
-                partsupp = self.partsupp
-                nation = self.nation
-                region = self.region
-                supplier = self.supplier
+            lineitem = self.lineitem
+            customer = self.customer
+            orders = self.orders
+            part = self.part
+            partsupp = self.partsupp
+            nation = self.nation
+            region = self.region
+            supplier = self.supplier
             """
             exec(init_meth)
             exec(code_block)
