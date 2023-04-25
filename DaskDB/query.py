@@ -29,7 +29,7 @@ col_names_partsupp = ['ps_partkey','ps_suppkey','ps_availqty','ps_supplycost','p
 col_names_nation = ['n_nationkey','n_name','n_regionkey','n_comment']
 col_names_region = ['r_regionkey','r_name','r_comment']
 col_names_countries = ['id', 'c_name']
-col_names_distances = ['src', 'target', 'cost']
+col_names_distances = ['src', 'target', 'distance']
 is_fetch_data=False
 
 #skdas
