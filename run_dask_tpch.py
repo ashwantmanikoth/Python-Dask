@@ -773,8 +773,11 @@ sql106_iter_2 = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_n
 SELECT   cte_custkey,
          cte_customer_name,
          cte_segment,
-         cte_revenue
-FROM     cte_customer_tree;"""
+         sum(cte_revenue) AS total_revenue
+FROM     cte_customer_tree
+GROUP BY cte_custkey,
+         cte_customer_name,
+         cte_segment;"""
 
 
 
