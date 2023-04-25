@@ -13,7 +13,7 @@ class IterativeQueryProcessor:
     def __init__(self, client, base_code_block, iterative_code_block, final_code_block, **dataframes):
         self.client = client
         self.dataframes = dataframes
-        cte_name_match = re.search(r'(\w+)\s*=\s*\w+\s*\.\w+\s*\(\s*\)$', final_code_block, flags=re.MULTILINE)
+        cte_name_match = re.search(r'((\w+)\s*=.*)$', final_code_block, flags=re.MULTILINE)
         if cte_name_match:
             cte_name = cte_name_match.group(1)
         else:
@@ -32,7 +32,7 @@ class IterativeQueryProcessor:
 
         statements = code_block.splitlines(True)
 
-        last_assignment_match = re.search(r'(\w+)\s*=\s*\w+\s*\.\w+\s*\(\s*\)$', code_block, flags=re.MULTILINE)
+        last_assignment_match = re.search(r'((\w+)\s*=.*)$', code_block, flags=re.MULTILINE)
 
         if last_assignment_match:
             return_var = last_assignment_match.group(1)
