@@ -159,7 +159,7 @@ def get_query_plan(sql, udf_list, query_context):
         p = []
         if query_context.is_iterative() and query_context.cte == alias:
             use_cols[string] = query_context.cte_params
-            if query_context.cte == 'paths':
+            if query_context.cte == 'cte_paths':
                 p.append((query_context.cte_params[0], 'LONG_TYPE'))
                 p.append((query_context.cte_params[1], 'LONG_TYPE'))
                 p.append((query_context.cte_params[2], 'LONG_TYPE'))
