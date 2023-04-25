@@ -53,13 +53,18 @@ class IterativeQueryProcessor:
         cte = self.base_query()
         iteration = 0
         while True:
-            new_cte = self.recursive_query(cte)
-            if len(new_cte) == 0 or iteration >= max_iterations:
+            result = self.recursive_query(cte)
+            temp_cte = dd.concat([cte, result]).drop_duplicates()
+            if self.is_similar(cte, temp_cte) or iteration >= max_iterations:
                 break
 
-            cte = dd.concat([cte, new_cte]).drop_duplicates()
+            cte = temp_cte
             iteration += 1
         return self.final_query(cte)
+
+    @staticmethod
+    def is_similar(df1, df2):
+        return len(df1) == len(df2)
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns
