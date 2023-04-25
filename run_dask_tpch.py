@@ -671,7 +671,7 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive paths(origin, destination, shortest_dist, lvl) AS
+sql5a = """WITH recursive paths (origin, destination, shortest_dist, lvl) AS
 (
        SELECT src AS origin,
               target AS destination,
