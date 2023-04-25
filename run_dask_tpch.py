@@ -686,7 +686,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               target AS cte_target,
               cte_distance + cost AS cte_distance,
               cte_lvl + 1 AS cte_lvl
-       FROM   paths,
+       FROM   cte_paths,
               distances,
               countries
        WHERE  cte_target = origin
@@ -696,7 +696,7 @@ SELECT   cte_src,
          cte_target,
          cte_distance,
          cte_lvl
-FROM     paths
+FROM     cte_paths
 WHERE    cte_target = 5
 ORDER BY cte_distance limit 1;
 """
