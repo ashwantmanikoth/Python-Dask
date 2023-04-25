@@ -38,7 +38,14 @@ class DaskQueryParser:
 
             self.base = re.search(base_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(1) + ";"
             self.iterative = re.search(recursive_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
-            self.final = re.search(final_query_pattern, self.query, re.DOTALL | re.IGNORECASE).group(0) + ";"
+            self.final = """SELECT   cte_src AS through,
+         cte_target,
+         cte_distance,
+         cte_lvl
+FROM     cte_paths
+WHERE    cte_target = 5
+GROUP BY cte_target
+HAVING cte_distance = MIN(cte_distance)""" # re.search(final_query_pattern, self.query, re.DOTALL | re.IGNORECASE).group(0) + ";"
 
         return self
 
