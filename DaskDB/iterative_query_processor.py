@@ -64,6 +64,7 @@ class IterativeQueryProcessor:
 
             cte = temp_cte
             iteration += 1
+            print(f'Iteration {iteration} completed.')
         return final_query(self, cte)
 
     @staticmethod
