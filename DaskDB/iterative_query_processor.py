@@ -19,9 +19,9 @@ class IterativeQueryProcessor:
         else:
             cte_name = None
 
-        self.create_function("base_query", base_code_block, [])
+        #self.create_function("base_query", base_code_block, [])
         #self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
-        self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
+        #self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
 
     def create_function(self, func_name, code_block, param_names):
         default_args = ', '.join([f'{key}=self.dataframes["{key}"]' for key in self.dataframes.keys()])
@@ -46,11 +46,11 @@ class IterativeQueryProcessor:
         setattr(self, func_name, locals()[func_name])
 
     def process_iterative_query(self, max_iterations=10):
-        base_query: Callable = getattr(self, "base_query")
+        #base_query: Callable = getattr(self, "base_query")
         #recursive_query: Callable = getattr(self, "recursive_query")
-        final_query: Callable = getattr(self, "final_query")
+        #final_query: Callable = getattr(self, "final_query")
 
-        cte = base_query(self)
+        cte = self.base_query()
         iteration = 0
         while True:
             new_cte_customer_tree = self.recursive_query(cte)
@@ -59,10 +59,23 @@ class IterativeQueryProcessor:
 
             cte = dd.concat([cte, new_cte_customer_tree])
             iteration += 1
-        return final_query(self, cte)
+        return self.final_query(cte)
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns
+
+    def base_query(self):
+        distances = self.dataframes["distances"]
+        self.add_columns_index(distances, "distances")
+        distances = distances[distances[self.column_mappings["distances"][0]] == 1]
+        distances = distances.rename(columns={self.column_mappings["distances"][0]: "cte_src",
+                                              self.column_mappings["distances"][1]: "cte_target",
+                                              self.column_mappings["distances"][2]: "cte_distance"})
+        self.add_columns_index(distances, "distances")
+        distances["cte_lvl"] = 1
+        distances = distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
+        self.add_columns_index(distances, "distances")
+        return distances
 
     def recursive_query(self, cte_paths):
         distances = self.dataframes["distances"]
@@ -98,4 +111,10 @@ class IterativeQueryProcessor:
                                                 self.column_mappings["merged_table_distances"][1]] + 1
         merged_table_distances = merged_table_distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
         self.add_columns_index(merged_table_distances, "merged_table_distances")
+
+        return merged_table_distances
+
+    def final_query(self, cte_paths):
+        self.add_columns_index(cte_paths, "cte_paths")
+        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][1]] == 5]
         return cte_paths
