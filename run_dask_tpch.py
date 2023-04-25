@@ -778,7 +778,8 @@ SELECT   cte_custkey,
 FROM     cte_customer_tree
 GROUP BY cte_custkey,
          cte_customer_name,
-         cte_segment;"""
+         cte_segment,
+         cte_lvl;"""
 
 
 
