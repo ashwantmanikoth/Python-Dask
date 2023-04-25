@@ -50,17 +50,16 @@ class IterativeQueryProcessor:
         recursive_query: Callable = getattr(self, "recursive_query")
         final_query: Callable = getattr(self, "final_query")
 
-        cte_customer_tree = base_query(self)
-        print(cte_customer_tree.dtypes)
+        cte = base_query(self)
         iteration = 0
         while True:
-            new_cte_customer_tree = recursive_query(self, cte_customer_tree)
+            new_cte_customer_tree = recursive_query(self, cte)
             if len(new_cte_customer_tree) == 0 or iteration >= max_iterations:
                 break
 
-            cte_customer_tree = dd.concat([cte_customer_tree, new_cte_customer_tree])
+            cte = dd.concat([cte, new_cte_customer_tree])
             iteration += 1
-        return final_query(self, cte_customer_tree)
+        return final_query(self, cte)
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns

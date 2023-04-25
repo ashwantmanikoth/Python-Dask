@@ -677,20 +677,16 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               target AS cte_target,
               distance AS cte_distance,
               1 AS cte_lvl
-       FROM   countries,
-              distances
+       FROM   distances
        WHERE  src = 1
-       AND    src = id
        UNION ALL
        SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
               cte_lvl + 1 AS cte_lvl
        FROM   cte_paths,
-              distances,
-              countries
+              distances
        WHERE  cte_target = src
-       AND    id = src
        AND    cte_lvl < 8)
 SELECT   cte_src,
          cte_target,
