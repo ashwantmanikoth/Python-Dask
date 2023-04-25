@@ -63,9 +63,6 @@ dp.set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, c
 
 
 def getPlan(sql, udf_list):
-    #if '(' in sql:
-     #   plan=getNestedPlan(sql)
-    #else :
     plan,used_columns=getNormalPlan(sql, udf_list)
     return plan,used_columns
 
