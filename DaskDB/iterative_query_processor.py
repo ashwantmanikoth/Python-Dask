@@ -15,7 +15,7 @@ class IterativeQueryProcessor:
         self.dataframes = dataframes
         cte_name_match = re.search(r'((\w+)\s*=.*)$', final_code_block, flags=re.MULTILINE)
         if cte_name_match:
-            cte_name = cte_name_match.group(1)
+            cte_name = cte_name_match.group(2)
         else:
             cte_name = None
 
@@ -35,7 +35,7 @@ class IterativeQueryProcessor:
         last_assignment_match = re.search(r'((\w+)\s*=.*)$', code_block, flags=re.MULTILINE)
 
         if last_assignment_match:
-            return_var = last_assignment_match.group(1)
+            return_var = last_assignment_match.group(2)
             statements.pop()
             statements.append('return ' + return_var)
 
