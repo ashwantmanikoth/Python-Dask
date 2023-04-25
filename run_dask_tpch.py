@@ -691,16 +691,17 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
 SELECT   cte_src AS through,
          cte_target,
          cte_distance,
-         cte_lvl AS number_of_nodes
+         cte_lvl + 3 AS number_of_nodes
 FROM     cte_paths
 WHERE    cte_target = 5
 ORDER BY cte_distance ASC limit 1;
 """
 
-sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
+sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_segment, cte_revenue, cte_lvl) AS
 (
        SELECT c_custkey AS cte_custkey,
               c_name AS cte_customer_name,
+              c_mktsegment AS cte_segment,
               o_totalprice AS cte_revenue,
               1 AS cte_lvl
        FROM   customer,
@@ -711,6 +712,7 @@ sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, 
        UNION
        SELECT c_custkey AS cte_custkey,
               c_name AS cte_customer_name,
+              c_mktsegment AS cte_segment,
               cte_revenue + o_totalprice AS cte_revenue,
               cte_lvl + 1 AS cte_lvl
        FROM   customer,
@@ -721,6 +723,7 @@ sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, 
        AND    cte_lvl < 2 )
 SELECT   cte_custkey,
          cte_customer_name,
+         cte_segment,
          sum(cte_revenue) AS total_revenue
 FROM     cte_customer_tree
 GROUP BY cte_custkey,
