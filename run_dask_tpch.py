@@ -484,6 +484,8 @@ def impl_conjugate_grad_opt(scale_factor='1'):
 
 
 sql_merge = """select * from lineitem,orders where l_orderkey = o_orderkey order by l_extendedprice  limit 10;"""
+
+sql_merge = """select * from lineitem,orders where l_orderkey = o_orderkey order by l_extendedprice  limit 10;"""
 sql1="""select
     l_returnflag,
     l_linestatus,
@@ -525,8 +527,11 @@ where
 group by
     l_orderkey,
     o_orderdate,
-    o_shippriority;
-"""
+    o_shippriority
+order by
+    revenue desc,
+    o_orderdate
+limit 10; """
 
 sql5="""select
     n_name,
@@ -549,8 +554,10 @@ where
     and o_orderdate >= date '1995-01-01'
     and o_orderdate < date '1995-01-01' + interval '1' year
 group by
-    n_name;
-"""
+    n_name
+order by
+    revenue desc
+limit 1;"""
 
 
 sql5a = """select
@@ -657,7 +664,7 @@ order by
 	revenue desc
 limit 10;"""
 
-xxxxsql5a = """select
+sql5a = """select
 	l_extendedprice,
 	sum(l_extendedprice * (1 - l_discount)) as revenue
 from
@@ -671,7 +678,50 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl) AS
+sql_test = """select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue
+from
+	orders,
+	lineitem
+where
+	l_orderkey = o_orderkey
+	and o_orderdate >= date '1995-01-01'
+group by
+	l_orderkey
+order by
+	revenue
+limit 5;"""
+
+sql_test_2 = """select o_orderkey, o_custkey
+from
+    orders
+where
+    o_custkey < 50;
+    """
+
+sql_rem = """select
+    LinearRegression(o_orderkey, o_totalprice)
+from
+    orders
+where
+    o_custkey < 50;
+    """
+
+sql_benchmark="""select
+    c_name
+from
+    customer,
+    orders
+where
+    c_custkey = o_custkey
+    and o_orderdate >= date '1995-01-01'
+    and o_orderdate < date '1995-01-01' + interval '1' year
+group by
+    c_name
+limit 1;"""
+
+sql105_iter_1 = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl) AS
 (
        SELECT src AS cte_src,
               target AS cte_target,
@@ -697,7 +747,7 @@ WHERE    cte_target = 5
 ORDER BY cte_distance ASC limit 1;
 """
 
-sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_segment, cte_revenue, cte_lvl) AS
+sql106_iter_2 = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_segment, cte_revenue, cte_lvl) AS
 (
        SELECT c_custkey AS cte_custkey,
               c_name AS cte_customer_name,
@@ -728,34 +778,6 @@ FROM     cte_customer_tree
 GROUP BY cte_custkey,
          cte_customer_name,
          cte_segment;"""
-
-sql_test_2 = """select o_orderkey, o_custkey
-from
-    orders
-where
-    o_custkey < 50;
-    """
-
-sql_rem = """select
-    LinearRegression(o_orderkey, o_totalprice)
-from
-    orders
-where
-    o_custkey < 50;
-    """
-
-sql_benchmark="""select
-    c_name
-from
-    customer,
-    orders
-where
-    c_custkey = o_custkey
-    and o_orderdate >= date '1995-01-01'
-    and o_orderdate < date '1995-01-01' + interval '1' year
-group by
-    c_name
-limit 1;"""
 
 
 
@@ -953,6 +975,30 @@ elif query_number == 104:
             total_time += (end-start)
     number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
     result += "Avg of warm runs : " + str(total_time / number_or_runs) + "\n\n"
+elif query_number == 105:
+    for i in range(number_or_runs):
+        start = timer()
+        print(query(sql105_iter_1,scale_factor))
+        first = False
+        end = timer()
+        result += str(end-start) + "\n"
+        print ("Run " + str(i+1) + " : " + str(end-start))
+        if i > 0:
+            total_time += (end-start)
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time/number_or_runs) + "\n\n"
+elif query_number == 106:
+    for i in range(number_or_runs):
+        start = timer()
+        print(query(sql106_iter_2, scale_factor))
+        first = False
+        end = timer()
+        result += str(end-start) + "\n"
+        print ("Run " + str(i+1) + " : " + str(end-start))
+        if i > 0:
+            total_time += (end-start)
+    number_or_runs = number_or_runs - 1 if number_or_runs > 1 else 1
+    result += "Avg of warm runs : " + str(total_time/number_or_runs) + "\n\n"
 else:
     print('query number is not a valid option')
 
