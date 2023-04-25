@@ -31,9 +31,9 @@ class IterativeQueryProcessor:
         statements = code_block.splitlines(True)
 
         for key in self.dataframes.keys():
-            statements.insert(0, key + ' = ' + 'self.dataframes[' + key + ']\n')
+            statements.insert(0, key + ' = ' + "self.dataframes[' + key + ']\n")
 
-        last_assignment_match = re.search(r'(\w+)\s*=\s*\w+\.\w+\(.*\)\s*$', code_block, flags=re.MULTILINE)
+        last_assignment_match = re.search(r'(\w+)\s*=\s*.+\s*$', statements[-1], flags=re.MULTILINE | re.DOTALL)
 
         if last_assignment_match:
             return_var = last_assignment_match.group(1)
