@@ -689,15 +689,15 @@ sql5a = """WITH recursive paths(origin, destination, shortest_dist, lvl) AS
        FROM   paths,
               distances,
               countries
-       WHERE  src = origin
+       WHERE  destination = origin
        AND    target = id 
        AND    lvl < 5)
 SELECT   origin,
          destination,
          shortest_dist
 FROM     paths
-WHERE    nation_id = 5
-ORDER BY total limit 1;
+WHERE    destination = 5
+ORDER BY shortest_dist limit 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
