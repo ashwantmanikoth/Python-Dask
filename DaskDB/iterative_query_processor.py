@@ -57,7 +57,7 @@ class IterativeQueryProcessor:
             if len(new_cte) == 0 or iteration >= max_iterations:
                 break
 
-            cte = dd.concat([cte, new_cte])
+            cte = dd.concat([cte, new_cte]).drop_duplicates()
             iteration += 1
         return self.final_query(cte)
 
