@@ -77,8 +77,6 @@ class IterativeQueryProcessor:
         distances = distances
         return distances
 
-        return distances
-
     def recursive_query(self, cte_paths):
         distances = self.dataframes["distances"]
         self.add_columns_index(distances, "distances")
@@ -114,7 +112,7 @@ class IterativeQueryProcessor:
         merged_table_distances = merged_table_distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
         self.add_columns_index(merged_table_distances, "merged_table_distances")
         merged_table_distances = merged_table_distances
-        return cte_paths
+        return merged_table_distances
 
     def final_query(self, cte_paths):
         self.add_columns_index(cte_paths, "cte_paths")
