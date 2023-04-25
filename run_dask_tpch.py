@@ -673,10 +673,10 @@ limit 5;"""
 
 sql5a = """WITH recursive paths(origin, dest, path, total, lvl) AS
 (
-       SELECT src  as origin,
-              target as dest,
-              c_name as path,
-              cost as total,
+       SELECT src,
+              target,
+              c_name,
+              cost,
               1 as lvl
        FROM   countries,
               distances
