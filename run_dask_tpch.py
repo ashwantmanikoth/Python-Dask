@@ -694,7 +694,7 @@ SELECT   cte_src AS through,
          cte_lvl
 FROM     cte_paths
 WHERE    cte_target = 5
-ORDER BY cte_distance desc LIMIT 1;
+ORDER BY cte_distance LIMIT 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
