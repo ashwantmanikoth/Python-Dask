@@ -699,20 +699,20 @@ ORDER BY cte_distance ASC limit 1;
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
 (
-       SELECT c_custkey    AS cte_custkey,
-              c_name       AS cte_customer_name,
+       SELECT c_custkey AS cte_custkey,
+              c_name AS cte_customer_name,
               o_totalprice AS cte_revenue,
-              1            AS cte_lvl
+              1 AS cte_lvl
        FROM   customer,
               orders
        WHERE  c_custkey = o_custkey
        AND    c_mktsegment = 'BUILDING'
        AND    c_custkey = 1
        UNION
-       SELECT c_custkey                  AS cte_custkey,
-              c_name                     AS cte_customer_name,
+       SELECT c_custkey AS cte_custkey,
+              c_name AS cte_customer_name,
               cte_revenue + o_totalprice AS cte_revenue,
-              cte_lvl     + 1            AS cte_lvl
+              cte_lvl + 1 AS cte_lvl
        FROM   customer,
               orders,
               cte_customer_tree
@@ -725,25 +725,6 @@ SELECT   cte_custkey,
 FROM     cte_customer_tree
 GROUP BY cte_custkey,
          cte_customer_name;"""
-
-yyy_sql_test = """WITH RECURSIVE cumulative_extended_prices (l_orderkey, cumulative_price) AS (
-  select l_orderkey, SUM(l_extendedprice) as cumulative_price
-  from lineitem
-  where l_orderkey = 1
-  union all
-  select 
-    l_orderkey, 
-    cumulative_extended_prices.cumulative_price + SUM(l_extendedprice) as cumulative_price
-  from 
-    lineitem, cumulative_extended_prices
-  where
-  l_orderkey = cumulative_extended_prices.l_orderkey + 1
-  and l_orderkey < 25
-  group by
-    l_orderkey, cumulative_extended_prices.cumulative_price;
-)
-select cumulative_extended_prices.l_orderkey from cumulative_extended_prices;
-	"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from
