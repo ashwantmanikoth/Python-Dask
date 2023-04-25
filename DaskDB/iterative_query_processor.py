@@ -15,7 +15,7 @@ class IterativeQueryProcessor:
         self.dataframes = dataframes
         cte_name_match = re.search(r'(\w+)\s*=\s*\w+\.\w+\(.*\)\s*$', final_code_block, flags=re.MULTILINE)
         if cte_name_match:
-            cte_name = cte_name_match.group(2)
+            cte_name = cte_name_match.group(1)
         else:
             cte_name = None
 
