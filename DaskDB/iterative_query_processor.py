@@ -20,7 +20,7 @@ class IterativeQueryProcessor:
             cte_name = None
 
         self.create_function("base_query", base_code_block, [])
-        self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
+        #self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
         self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
 
     def create_function(self, func_name, code_block, param_names):
@@ -47,13 +47,13 @@ class IterativeQueryProcessor:
 
     def process_iterative_query(self, max_iterations=10):
         base_query: Callable = getattr(self, "base_query")
-        recursive_query: Callable = getattr(self, "recursive_query")
+        #recursive_query: Callable = getattr(self, "recursive_query")
         final_query: Callable = getattr(self, "final_query")
 
         cte = base_query(self)
         iteration = 0
         while True:
-            new_cte_customer_tree = recursive_query(self, cte)
+            new_cte_customer_tree = self.recursive_query(cte)
             if len(new_cte_customer_tree) == 0 or iteration >= max_iterations:
                 break
 
@@ -63,3 +63,39 @@ class IterativeQueryProcessor:
 
     def add_columns_index(self, df, df_string):
         self.column_mappings[df_string] = df.columns
+
+    def recursive_query(self, cte_paths):
+        distances = self.dataframes["distances"]
+        self.add_columns_index(distances, "distances")
+        self.add_columns_index(cte_paths, "cte_paths")
+        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 8]
+        cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][1]: "cte_target",
+                                              self.column_mappings["cte_paths"][2]: "cte_distance",
+                                              self.column_mappings["cte_paths"][3]: "cte_lvl"})
+        self.add_columns_index(cte_paths, "cte_paths")
+        cte_paths = cte_paths.loc[:, ["cte_target", "cte_distance", "cte_lvl"]]
+        self.add_columns_index(cte_paths, "cte_paths")
+        join_col_1_list = [self.column_mappings["cte_paths"][0]]
+        join_col_2_list = [self.column_mappings["distances"][0]]
+        merged_table_distances = merge_tables('cte_paths', cte_paths, join_col_1_list, 'distances', distances,
+                                              join_col_2_list)
+        merged_table_distances = self.client.persist(merged_table_distances)
+        extract_col_1_list = [self.column_mappings["cte_paths"][1], self.column_mappings["cte_paths"][2]]
+        extract_col_2_list = [self.column_mappings["distances"][0], self.column_mappings["distances"][1],
+                              self.column_mappings["distances"][2]]
+        extract_list = extract_col_1_list + extract_col_2_list
+        merged_table_distances = merged_table_distances.loc[:, extract_list]
+        self.add_columns_index(merged_table_distances, "merged_table_distances")
+        merged_table_distances = merged_table_distances.rename(
+            columns={self.column_mappings["merged_table_distances"][2]: "cte_src",
+                     self.column_mappings["merged_table_distances"][3]: "cte_target"})
+        self.add_columns_index(merged_table_distances, "merged_table_distances")
+        merged_table_distances["cte_distance"] = merged_table_distances[
+                                                     self.column_mappings["merged_table_distances"][0]] + \
+                                                 merged_table_distances[
+                                                     self.column_mappings["merged_table_distances"][4]]
+        merged_table_distances["cte_lvl"] = merged_table_distances[
+                                                self.column_mappings["merged_table_distances"][1]] + 1
+        merged_table_distances = merged_table_distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
+        self.add_columns_index(merged_table_distances, "merged_table_distances")
+        return cte_paths
