@@ -18,18 +18,20 @@ class IterativeQueryProcessor:
         else:
             cte_name = None
 
-        self.create_function("xbase_query", base_code_block, [])
-        self.create_function("xrecursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
-        self.create_function("xfinal_query", final_code_block.replace("data_ml", cte_name), [cte_name])
+        self.create_function("base_query", base_code_block, [])
+        self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
+        self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
 
     def create_function(self, func_name, code_block, param_names):
-        default_args = ', '.join([f'{key}=self.dataframes["{key}"]' for key in self.dataframes.keys()])
         if len(param_names) > 0:
-            func_header = f'def {func_name}(self, ' + ', '.join(param_names) + ', ' + default_args + '):\n'
+            func_header = f'def {func_name}(self, ' + ', '.join(param_names) + '):\n'
         else:
-            func_header = f'def {func_name}(self, ' + default_args + '):\n'
+            func_header = f'def {func_name}(self):\n'
 
         statements = code_block.splitlines(True)
+
+        for key in self.dataframes.keys():
+            statements.insert(0, key + ' = ' + 'self.dataframes[' + key + ']')
 
         last_assignment_match = re.search(r'(\w+)\s*=\s*\w+\.\w+\(.*\)\s*$', code_block, flags=re.MULTILINE)
 
@@ -47,85 +49,21 @@ class IterativeQueryProcessor:
         setattr(self, func_name, locals()[func_name])
 
     def process_iterative_query(self, max_iterations=10):
-        # base_query: Callable = getattr(self, "base_query")
-        # recursive_query: Callable = getattr(self, "recursive_query")
-        # final_query: Callable = getattr(self, "final_query")
+        base_query: Callable = getattr(self, "base_query")
+        recursive_query: Callable = getattr(self, "recursive_query")
+        final_query: Callable = getattr(self, "final_query")
 
-        cte = self.base_query()
+        cte = base_query(self)
         iteration = 0
         while True:
-            result = self.recursive_query(cte)
+            result = recursive_query(self, cte)
             temp_cte = dd.concat([cte, result]).drop_duplicates()
             if self.is_similar(cte, temp_cte) or iteration >= max_iterations:
                 break
 
             cte = temp_cte
             iteration += 1
-        return self.final_query(cte)
-
-    def base_query(self):
-        distances = self.dataframes["distances"]
-        self.add_columns_index(distances, "distances")
-        distances = distances[distances[self.column_mappings["distances"][0]] == 1]
-        distances = distances.rename(columns={self.column_mappings["distances"][0]: "cte_src",
-                                              self.column_mappings["distances"][1]: "cte_target",
-                                              self.column_mappings["distances"][2]: "cte_distance"})
-        self.add_columns_index(distances, "distances")
-        distances["cte_lvl"] = 1
-        distances = distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
-        self.add_columns_index(distances, "distances")
-        distances = distances
-        return distances
-
-    def recursive_query(self, cte_paths):
-        distances = self.dataframes["distances"]
-        self.add_columns_index(distances, "distances")
-        self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 10]
-        cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][1]: "cte_target",
-                                              self.column_mappings["cte_paths"][2]: "cte_distance",
-                                              self.column_mappings["cte_paths"][3]: "cte_lvl"})
-        self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths.loc[:, ["cte_target", "cte_distance", "cte_lvl"]]
-        self.add_columns_index(cte_paths, "cte_paths")
-        join_col_1_list = [self.column_mappings["cte_paths"][0]]
-        join_col_2_list = [self.column_mappings["distances"][0]]
-        merged_table_distances = merge_tables('cte_paths', cte_paths, join_col_1_list, 'distances', distances,
-                                              join_col_2_list)
-        merged_table_distances = self.client.persist(merged_table_distances)
-        extract_col_1_list = [self.column_mappings["cte_paths"][1], self.column_mappings["cte_paths"][2]]
-        extract_col_2_list = [self.column_mappings["distances"][0], self.column_mappings["distances"][1],
-                              self.column_mappings["distances"][2]]
-        extract_list = extract_col_1_list + extract_col_2_list
-        merged_table_distances = merged_table_distances.loc[:, extract_list]
-        self.add_columns_index(merged_table_distances, "merged_table_distances")
-        merged_table_distances = merged_table_distances.rename(
-            columns={self.column_mappings["merged_table_distances"][2]: "cte_src",
-                     self.column_mappings["merged_table_distances"][3]: "cte_target"})
-        self.add_columns_index(merged_table_distances, "merged_table_distances")
-        merged_table_distances["cte_distance"] = merged_table_distances[
-                                                     self.column_mappings["merged_table_distances"][0]] + \
-                                                 merged_table_distances[
-                                                     self.column_mappings["merged_table_distances"][4]]
-        merged_table_distances["cte_lvl"] = merged_table_distances[
-                                                self.column_mappings["merged_table_distances"][1]] + 1
-        merged_table_distances = merged_table_distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
-        self.add_columns_index(merged_table_distances, "merged_table_distances")
-        merged_table_distances = merged_table_distances
-        return merged_table_distances
-
-    def final_query(self, cte_paths):
-        self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][1]] == 5]
-        cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][0]: "through",
-                                              self.column_mappings["cte_paths"][1]: "cte_target",
-                                              self.column_mappings["cte_paths"][2]: "cte_distance",
-                                              self.column_mappings["cte_paths"][3]: "number_of_nodes"})
-        self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths.loc[:, ["through", "cte_target", "cte_distance", "number_of_nodes"]]
-        self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths.head(1)
-        return cte_paths
+        return final_query(self, cte)
 
     @staticmethod
     def is_similar(df1, df2):
