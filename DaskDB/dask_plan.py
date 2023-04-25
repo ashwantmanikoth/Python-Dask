@@ -7,6 +7,8 @@ from timeit import default_timer as timer
 #from machine_learning_functions import log_regression,random_forest, k_means,lin_regress_fit,grid_search #sray
 # from pmlb import fetch_data, classification_dataset_names #sray
 from sklearn.model_selection import train_test_split
+
+from DaskDB.iterative_query_processor import IterativeQueryProcessor
 from DaskDB.table_information  import set_table_size, print_table_sizes, get_table_size,good_to_set_index,get_table_division,set_table_division
 #from dask_learned_index import write_relation_to_hdfs_and_create_sparse_index, read_relation_from_hdfs, merge_tables, is_good_to_create_db_index_on_column
 from DaskDB.dask_learned_index import create_index_and_distribute_data, merge_tables, is_good_to_create_db_index_on_column
@@ -20,11 +22,14 @@ col_region = None
 col_part = None
 col_supplier = None
 col_partsupp = None
+col_countries = None
+col_distances = None
 
 partition_size = "32MB"
 
 def set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, col_names_part,
-                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region):
+                     col_names_supplier, col_names_partsupp, col_names_nation, col_names_region,
+                      col_names_countries, col_names_distances):
     global col_lineitem
     col_lineitem = col_names_lineitem 
     global col_customer
@@ -41,6 +46,10 @@ def set_col_name_info(col_names_lineitem, col_names_customer, col_names_orders, 
     col_supplier = col_names_supplier 
     global col_partsupp
     col_partsupp = col_names_partsupp
+    global col_countries
+    col_countries = col_names_countries
+    global col_distances
+    col_distances = col_names_distances
     
     
 def get_column_name_from_relations(relName, colPos):
@@ -60,6 +69,10 @@ def get_column_name_from_relations(relName, colPos):
         return col_supplier[colPos]
     if relName == 'partsupp':
         return col_partsupp[colPos]
+    if relName == 'countries':
+        return col_countries[colPos]
+    if relName == 'distances':
+        return col_distances[colPos]
     return ""
 
     
@@ -72,7 +85,7 @@ class DaskPlan:
     one_order_by = False
     one_limit = False
     scale_factor='1'
-    tpch_list = ['lineitem','customer','orders','part','supplier','partsupp','nation','region']
+    tpch_list = ['lineitem','customer','orders','part','supplier','partsupp','nation','region', 'countries', 'distances']
     column_headers = """col_names_lineitem = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode', 'l_comment']
 col_names_customer = ['c_custkey','c_name','c_address','c_nationkey','c_phone','c_acctbal','c_mktsegment','c_comment']
 col_names_orders = ['o_orderkey','o_custkey','o_orderstatus','o_totalprice','o_orderdate','o_orderpriority','o_clerk','o_shippriority','o_comment']
@@ -80,7 +93,9 @@ col_names_part = ['p_partkey','p_name','p_mfgr','p_brand','p_type','p_size','p_c
 col_names_supplier = ['s_suppkey','s_name','s_address','s_nationkey','s_phone','s_acctball','s_comment']
 col_names_partsupp = ['ps_partkey','ps_suppkey','ps_availqty','ps_supplycost','ps_comment']
 col_names_nation = ['n_nationkey','n_name','n_regionkey','n_comment']
-col_names_region = ['r_regionkey','r_name','r_comment']\n"""
+col_names_region = ['r_regionkey','r_name','r_comment']
+col_names_countries = ['id', 'c_name']
+col_names_distances = ['src', 'target', 'distance']\n"""
 
     linetiem_read = "lineitem = dd.read_csv('data/lineitem.csv',delimiter='|',names=col_names_lineitem, parse_dates=[10,11,12])\n"
     customer_read = "customer = dd.read_csv('data/customer.csv',delimiter='|',names=col_names_customer)\n"
@@ -90,8 +105,10 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
     partsupp_read = "partsupp = dd.read_csv('data/partsupp.csv',delimiter='|',names=col_names_partsupp)\n"
     nation_read = "nation = dd.read_csv('data/nation.csv',delimiter='|',names=col_names_nation)\n"
     region_read = "region = dd.read_csv('data/region.csv',delimiter='|',names=col_names_region)\n"
+    countries_read = "countries = dd.read_csv('data/countries.csv',delimiter='|',names=col_names_countries)\n"
+    distances_read = "distances = dd.read_csv('data/distances.csv',delimiter='|',names=col_names_distances)\n"
     #dask_ml = 'data_ml = dd.read_csv("data_ml/data_ml.csv")'
-    init = column_headers + linetiem_read + customer_read  + orders_read + part_read + supplier_read + partsupp_read + nation_read + region_read 
+    init = column_headers + linetiem_read + customer_read  + orders_read + part_read + supplier_read + partsupp_read + nation_read + region_read + countries_read + distances_read
     exec(init)
 	
     # sray skdas
@@ -117,6 +134,8 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         partsupp_read=""
         region_read=""
         nation_read=""
+        countries_read=""
+        distances_read=""
         string = ""
         col_headers = ""
 
@@ -196,9 +215,29 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
                 region = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size,  names=self.col_names_region,usecols=use_cols_region)
                 set_table_size('region',region.npartitions)
                 self.region = create_index_and_distribute_data('region',region)
+
+            elif key=='countries':
+                use_cols_countries = values
+                #region = dd.read_csv('hdfs:///input/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size, storage_options={'host': self.hdfs_node, 'port': self.hdfs_port}, names=self.col_names_region,usecols=use_cols_region)
+                countries = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_'+scale_factor+'/countries.csv',delimiter='|', blocksize=partition_size,  names=self.col_names_countries,usecols=use_cols_countries)
+                set_table_size('countries',countries.npartitions)
+                self.countries = create_index_and_distribute_data('countries',countries)
+
+            elif key == 'distances':
+                use_cols_distances = values
+                # region = dd.read_csv('hdfs:///input/datasets_for_dask_DB/data_'+scale_factor+'/region.csv',delimiter='|', blocksize=partition_size, storage_options={'host': self.hdfs_node, 'port': self.hdfs_port}, names=self.col_names_region,usecols=use_cols_region)
+                distances = dd.read_csv('/home/ashwanta75/datasets_for_dask_DB/data_' + scale_factor + '/distances.csv',
+                                     delimiter='|', blocksize=partition_size, names=self.col_names_distances,
+                                     usecols=use_cols_distances)
+                set_table_size('distances', distances.npartitions)
+                self.distances = create_index_and_distribute_data('distances', distances)
                
         
     def create_filter_strings(self,data_table,task,offset):
+        if 'left' not in task or 'right' not in task:
+            if task['type'] == 'CONSTANT':
+                return task['value']
+
         if task['left']['type'] == 'VARIABLE':
             left_arg = (data_table + '[' + 'self.column_mappings["' + data_table + '"][' 
             + str(task['left']['columnIdx']-offset) + ']]')
@@ -371,24 +410,49 @@ col_names_region = ['r_regionkey','r_name','r_comment']\n"""
         return  agg_string
     
     def convert_to_dask_code(self,dask_plan):
-#         init_reln = ""
-#         for rel_name in relation_list:
-#             init_reln += rel_name + "=self." + rel_name +"\n"
-#              init_reln += rel_name + "=self." + rel_name + ".compute()\n"
-#              init_reln += "print " + rel_name +"\n"       
-#         print init_reln
-#         exec(init_reln)
-#        return
-        init_meth = """lineitem = self.lineitem
+        if len(dask_plan) > 1:
+            base_code_block, _ = self.convert_plan(dask_plan[0])
+            iterative_code_block, _ = self.convert_plan(dask_plan[1])
+            final_query_block, _ = self.convert_plan(dask_plan[2])
+
+            dataframes = {
+                "lineitem": self.lineitem,
+                "customer": self.customer,
+                "orders": self.orders,
+                "part": self.part,
+                "partsupp": self.partsupp,
+                "nation": self.nation,
+                "region": self.region,
+                "supplier": self.supplier,
+                "countries": self.countries,
+                "distances": self.distances
+            }
+
+            iterative_query_processor = IterativeQueryProcessor(
+                self.client, base_code_block, iterative_code_block, final_query_block, **dataframes
+            )
+
+            result = iterative_query_processor.process_iterative_query()
+            return result.compute()
+        else:
+            code_block, table = self.convert_plan(dask_plan[0])
+            init_meth = """
+lineitem = self.lineitem
 customer = self.customer
 orders = self.orders
 part = self.part
 partsupp = self.partsupp
 nation = self.nation
 region = self.region
-supplier = self.supplier"""
-#        print (init_meth)
-        exec(init_meth)
+supplier = self.supplier
+countries = self.countries
+distances = self.distances
+            """
+            exec(init_meth)
+            exec(code_block)
+            return vars()[table]
+
+    def convert_plan(self, dask_plan):
         code_to_execute = ""
         orderby_limit = "" 
         mt_count = 0
@@ -539,7 +603,10 @@ supplier = self.supplier"""
                     if not self.one_limit: 
                         if orderby_limit:
                             #sray: code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'],ascending=['+orderby_limit[1]+"]).compute()"
-                            code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+']).compute()'
+                            if orderby_limit[3][0] == False:
+                                code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'])'
+                            else:
+                                code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nsmallest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'])'
                         else:
                             code_to_execute +=  task['data_table'] + '=' + task['data_table'] + '.head(' + str(task['num_of_rows']) + ')\n'
                         self.one_limit=True
@@ -568,8 +635,9 @@ supplier = self.supplier"""
 
 #         print("TO EXECUTE:\n"+ code_to_execute)
        # print self.column_mappings
-        exec(code_to_execute)
-        return vars()[task['data_table']]
+        #exec(code_to_execute)
+        #return vars()[task['data_table']]
+        return code_to_execute, task['data_table']
     
     def call_udf_func(self, udf_name, ddf, param_pos_list, is_compute_invoked):
 #         if udf_name == 'LinearRegression':
