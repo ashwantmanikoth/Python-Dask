@@ -36,7 +36,7 @@ class IterativeQueryProcessor:
 
         if last_assignment_match:
             return_var = last_assignment_match.group(1)
-            statements.pop()
+            statements[-1] = statements[-1].replace(".compute()", "")
             statements.append('return ' + return_var)
 
         indented_code = '    '.join(statements)
@@ -80,7 +80,7 @@ class IterativeQueryProcessor:
     def recursive_query(self, cte_paths):
         distances = self.dataframes["distances"]
         self.add_columns_index(distances, "distances")
-        self.add_columns_index(cte_paths, "cte_paths")
+        self.add_columns_index(data_ml, "cte_paths")
         cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 8]
         cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][1]: "cte_target",
                                               self.column_mappings["cte_paths"][2]: "cte_distance",
@@ -115,6 +115,6 @@ class IterativeQueryProcessor:
         return merged_table_distances
 
     def final_query(self, cte_paths):
-        self.add_columns_index(cte_paths, "cte_paths")
         cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][1]] == 5]
+        cte_paths = cte_paths.nlargest(1, columns=["cte_distance"])
         return cte_paths
