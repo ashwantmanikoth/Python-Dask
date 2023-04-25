@@ -671,33 +671,34 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive paths (origin, destination, shortest_dist, lvl) AS
+sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl) AS
 (
-       SELECT src AS origin,
-              target AS destination,
-              cost AS shortest_dist,
-              1 AS lvl
+       SELECT src AS cte_src,
+              target AS cte_target,
+              cost AS cte_distance,
+              1 AS cte_lvl
        FROM   countries,
               distances
        WHERE  src = 1
        AND    src = id
        UNION
-       SELECT src AS origin, 
-              target AS destination,
-              shortest_dist + cost AS shortest_dist,
-              lvl + 1 AS lvl
+       SELECT src AS cte_src, 
+              target AS cte_target,
+              shortest_dist + cost AS cte_distance,
+              lvl + 1 AS cte_lvl
        FROM   paths,
               distances,
               countries
-       WHERE  destination = origin
-       AND    target = id 
+       WHERE  cte_target = origin
+       AND    cte_target = id 
        AND    lvl < 5)
-SELECT   origin,
-         destination,
-         shortest_dist
+SELECT   cte_src,
+         cte_target,
+         cte_distance,
+         cte_lvl
 FROM     paths
-WHERE    destination = 5
-ORDER BY shortest_dist limit 1;
+WHERE    cte_target = 5
+ORDER BY cte_distance limit 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
