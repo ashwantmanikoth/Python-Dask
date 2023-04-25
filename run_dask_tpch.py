@@ -691,13 +691,13 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               countries
        WHERE  cte_target = src
        AND    cte_target = id 
-       AND    cte_lvl < 5)
+       AND    cte_lvl < 8)
 SELECT   cte_src,
          cte_target,
          cte_distance,
          cte_lvl
 FROM     cte_paths
-WHERE    cte_src=1 AND cte_target = 5
+WHERE    cte_target = 5
 ORDER BY cte_distance limit 1;
 """
 
