@@ -733,7 +733,7 @@ sql105_iter_1 = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, 
        SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
-              cte_lvl AS cte_lvl
+              cte_lvl + 1 AS cte_lvl
        FROM   cte_paths,
               distances
        WHERE  cte_target = src
@@ -741,7 +741,7 @@ sql105_iter_1 = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, 
 SELECT   cte_src AS through,
          cte_target,
          cte_distance,
-         cte_lvl + 3 AS number_of_nodes
+         cte_lvl + 1 AS number_of_nodes
 FROM     cte_paths
 WHERE    cte_target = 5
 ORDER BY cte_distance ASC limit 1;
