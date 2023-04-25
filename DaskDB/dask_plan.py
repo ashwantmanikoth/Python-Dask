@@ -604,10 +604,9 @@ distances = self.distances
                         if orderby_limit:
                             #sray: code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'],ascending=['+orderby_limit[1]+"]).compute()"
                             if orderby_limit[3][0] == False:
-                                code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+']).compute()'
+                                code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nlargest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'])'
                             else:
-                                code_to_execute += task['data_table'] + '=' + task['data_table'] + '.head(' + str(
-                                    task['num_of_rows']) + ').compute()'
+                                code_to_execute +=task['data_table'] + '=' + task['data_table'] + '.nsmallest(' + str(task['num_of_rows']) + ",columns=["+orderby_limit[0]+'])'
                         else:
                             code_to_execute +=  task['data_table'] + '=' + task['data_table'] + '.head(' + str(task['num_of_rows']) + ')\n'
                         self.one_limit=True
