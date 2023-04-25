@@ -53,11 +53,11 @@ class IterativeQueryProcessor:
         cte = self.base_query()
         iteration = 0
         while True:
-            new_cte_customer_tree = self.recursive_query(cte)
-            if len(new_cte_customer_tree) == 0 or iteration >= max_iterations:
+            new_cte = self.recursive_query(cte)
+            if len(new_cte) == 0 or iteration >= max_iterations:
                 break
 
-            cte = dd.concat([cte, new_cte_customer_tree])
+            cte = dd.concat([cte, new_cte])
             iteration += 1
         return self.final_query(cte)
 

@@ -688,6 +688,10 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               distances
        WHERE  cte_target = src
        AND    cte_lvl < 8)
+       AND    NOT EXISTS (SELECT 1
+                          FROM   cte_paths q
+                          WHERE  q.cte_src = d.src
+                          AND    q.cte_target = d.target))
 SELECT   cte_src,
          cte_target,
          cte_distance,
