@@ -684,7 +684,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
        UNION
        SELECT src AS cte_src, 
               target AS cte_target,
-              shortest_dist + cost AS cte_distance,
+              cte_distance + cost AS cte_distance,
               lvl + 1 AS cte_lvl
        FROM   paths,
               distances,
