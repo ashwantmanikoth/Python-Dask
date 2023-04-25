@@ -689,7 +689,7 @@ sql5a = """WITH recursive paths(origin, destination, shortest_dist, lvl) AS
        FROM   paths,
               distances,
               countries
-       WHERE  src = nation_id
+       WHERE  src = origin
        AND    target = id 
        AND    lvl < 5)
 SELECT   origin,
