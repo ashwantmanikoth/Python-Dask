@@ -681,7 +681,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               distances
        WHERE  src = 1
        AND    src = id
-       UNION ALL
+       UNION
        SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
@@ -697,7 +697,7 @@ SELECT   cte_src,
          cte_distance,
          cte_lvl
 FROM     cte_paths
-WHERE    cte_target = 5
+WHERE    cte_src=1 AND cte_target = 5
 ORDER BY cte_distance limit 1;
 """
 
