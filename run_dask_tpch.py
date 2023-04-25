@@ -671,26 +671,27 @@ order by
 	revenue desc
 limit 5;"""
 
-sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl, path) AS
+sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl) AS
 (
        SELECT src AS cte_src,
               target AS cte_target,
               distance AS cte_distance,
-              1 AS cte_lvl,
-              CAST(src AS VARCHAR) || ',' || CAST(target AS VARCHAR) AS path
+              1 AS cte_lvl
        FROM   distances
        WHERE  src = 1
        UNION ALL
        SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
-              cte_lvl + 1 AS cte_lvl,
-              path || ',' || CAST(target AS VARCHAR) AS path
+              cte_lvl + 1 AS cte_lvl
        FROM   cte_paths,
               distances
        WHERE  cte_target = src
        AND    cte_lvl < 8
-       AND    INSTR(',' || path || ',', ',' || CAST(target AS VARCHAR) || ',') = 0)
+       AND    NOT EXISTS (SELECT 1
+                          FROM   cte_paths q
+                          WHERE  q.cte_src = d.src
+                          AND    q.cte_target = d.target))
 SELECT   cte_src,
          cte_target,
          cte_distance,

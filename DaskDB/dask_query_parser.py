@@ -41,22 +41,17 @@ class DaskQueryParser:
             SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
-              cte_lvl + 1 AS cte_lvl,
-              path || ',' || CAST(target AS VARCHAR) AS path
-           FROM   cte_paths,
-                  distances
-           WHERE  cte_target = src
-           AND    cte_lvl < 8
-           AND    INSTR(',' || path || ',', ',' || CAST(target AS VARCHAR) || ',') = 0)""" # re.search(recursive_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
-            self.final = """
-            SELECT   cte_src,
-                     cte_target,
-                     cte_distance,
-                     cte_lvl
-            FROM     cte_paths
-            WHERE    cte_target = 5
-            ORDER BY cte_distance limit 1;
-            """ #re.search(final_query_pattern, self.query, re.DOTALL | re.IGNORECASE).group(0) + ";"
+              cte_lvl + 1 AS cte_lvl
+       FROM   cte_paths,
+              distances
+       WHERE  cte_target = src
+       AND    cte_lvl < 8
+       AND    NOT EXISTS (SELECT 1
+                          FROM   cte_paths q
+                          WHERE  q.cte_src = d.src
+                          AND    q.cte_target = d.target));
+            """# re.search(recursive_case_pattern, self.query, re.DOTALL | re.IGNORECASE).group(2) + ";"
+            self.final = re.search(final_query_pattern, self.query, re.DOTALL | re.IGNORECASE).group(0) + ";"
 
         return self
 
