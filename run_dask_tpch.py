@@ -726,7 +726,8 @@ SELECT   cte_custkey,
          sum(cte_revenue) AS total_revenue
 FROM     cte_customer_tree
 GROUP BY cte_custkey,
-         cte_customer_name;"""
+         cte_customer_name,
+         cte_segment;"""
 
 sql_test_2 = """select o_orderkey, o_custkey
 from
