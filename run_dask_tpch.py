@@ -770,7 +770,11 @@ sql106_iter_2 = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_n
               cte_customer_tree
        WHERE  c_custkey = o_custkey
        AND    c_custkey = cte_custkey)
-SELECT   * FROM  cte_customer_tree;"""
+SELECT   cte_custkey,
+         cte_customer_name,
+         cte_segment,
+         cte_revenue
+FROM     cte_customer_tree;"""
 
 
 
