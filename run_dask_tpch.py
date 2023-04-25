@@ -689,13 +689,12 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
        WHERE  cte_target = src
        AND    cte_lvl < 10)
 SELECT   cte_src AS through,
-         cte_target,
-         cte_distance,
-         cte_lvl
+         cte_target AS target,
+         cte_distance AS shorest_distance,
+         cte_lvl AS number_of_nodes
 FROM     cte_paths
 WHERE    cte_target = 5
-GROUP BY cte_target
-HAVING cte_distance = MIN(cte_distance)
+ORDER BY cte_distance ASC limit 1;
 """
 
 sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_revenue, cte_lvl) AS
