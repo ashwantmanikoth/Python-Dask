@@ -775,11 +775,7 @@ SELECT   cte_custkey,
          cte_segment,
          cte_lvl,
          cte_revenue AS total_revenue
-FROM     cte_customer_tree
-GROUP BY cte_custkey,
-         cte_customer_name,
-         cte_segment,
-         cte_lvl;"""
+FROM     cte_customer_tree;"""
 
 
 
