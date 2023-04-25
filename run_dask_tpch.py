@@ -690,7 +690,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl,
               distances
        WHERE  cte_target = src
        AND    cte_lvl < 8
-       AND    INSTR(',' || p.path || ',', ',' || CAST(d.target AS VARCHAR) || ',') = 0)
+       AND    INSTR(',' || path || ',', ',' || CAST(target AS VARCHAR) || ',') = 0)
 SELECT   cte_src,
          cte_target,
          cte_distance,
