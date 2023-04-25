@@ -38,7 +38,8 @@ class IterativeQueryProcessor:
         if last_assignment_match:
             return_var = last_assignment_match.group(1)
             statements[-1] = statements[-1].replace(".compute()", "")
-            statements.append('\nreturn ' + return_var)
+            statements.append('\n')
+            statements.append('return ' + return_var)
 
         indented_code = '    '.join(statements)
         func_definition = func_header + '    ' + indented_code
