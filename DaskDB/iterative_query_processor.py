@@ -80,7 +80,7 @@ class IterativeQueryProcessor:
     def recursive_query(self, cte_paths):
         distances = self.dataframes["distances"]
         self.add_columns_index(distances, "distances")
-        self.add_columns_index(data_ml, "cte_paths")
+        self.add_columns_index(cte_paths, "cte_paths")
         cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 8]
         cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][1]: "cte_target",
                                               self.column_mappings["cte_paths"][2]: "cte_distance",
