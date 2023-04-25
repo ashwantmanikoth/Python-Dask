@@ -689,9 +689,9 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
        WHERE  cte_target = src
        AND    cte_lvl < 10)
 SELECT   cte_src AS through,
-         cte_target AS target,
-         cte_distance AS shorest_distance,
-         cte_lvl AS number_of_nodes
+         cte_target,
+         cte_distance,
+         cte_lvl
 FROM     cte_paths
 WHERE    cte_target = 5
 ORDER BY cte_distance ASC limit 1;
