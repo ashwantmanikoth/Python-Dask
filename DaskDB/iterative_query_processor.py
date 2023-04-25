@@ -75,6 +75,7 @@ class IterativeQueryProcessor:
         distances = distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
         self.add_columns_index(distances, "distances")
         distances = distances
+        return distances
 
         return distances
 
@@ -82,7 +83,7 @@ class IterativeQueryProcessor:
         distances = self.dataframes["distances"]
         self.add_columns_index(distances, "distances")
         self.add_columns_index(cte_paths, "cte_paths")
-        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 8]
+        cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][3]] < 10]
         cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][1]: "cte_target",
                                               self.column_mappings["cte_paths"][2]: "cte_distance",
                                               self.column_mappings["cte_paths"][3]: "cte_lvl"})
@@ -113,13 +114,19 @@ class IterativeQueryProcessor:
         merged_table_distances = merged_table_distances.loc[:, ["cte_src", "cte_target", "cte_distance", "cte_lvl"]]
         self.add_columns_index(merged_table_distances, "merged_table_distances")
         merged_table_distances = merged_table_distances
-
-        return merged_table_distances
+        return cte_paths
 
     def final_query(self, cte_paths):
         self.add_columns_index(cte_paths, "cte_paths")
         cte_paths = cte_paths[cte_paths[self.column_mappings["cte_paths"][1]] == 5]
-        cte_paths = cte_paths.nlargest(1, columns=["cte_distance"])
+        cte_paths = cte_paths.rename(columns={self.column_mappings["cte_paths"][0]: "through",
+                                              self.column_mappings["cte_paths"][1]: "cte_target",
+                                              self.column_mappings["cte_paths"][2]: "cte_distance",
+                                              self.column_mappings["cte_paths"][3]: "number_of_nodes"})
+        self.add_columns_index(cte_paths, "cte_paths")
+        cte_paths = cte_paths.loc[:, ["through", "cte_target", "cte_distance", "number_of_nodes"]]
+        self.add_columns_index(cte_paths, "cte_paths")
+        cte_paths = cte_paths.head(1)
         return cte_paths
 
     @staticmethod
