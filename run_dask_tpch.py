@@ -679,7 +679,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
               1 AS cte_lvl
        FROM   distances
        WHERE  src = 1
-       UNION ALL
+       UNION
        SELECT src AS cte_src, 
               target AS cte_target,
               cte_distance + distance AS cte_distance,
@@ -687,11 +687,7 @@ sql5a = """WITH recursive cte_paths (cte_src, cte_target, cte_distance, cte_lvl)
        FROM   cte_paths,
               distances
        WHERE  cte_target = src
-       AND    cte_lvl < 8
-       AND    NOT EXISTS (SELECT 1
-                          FROM   cte_paths q
-                          WHERE  q.cte_src = d.src
-                          AND    q.cte_target = d.target))
+       AND    cte_lvl < 8)
 SELECT   cte_src,
          cte_target,
          cte_distance,
@@ -712,7 +708,7 @@ sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, 
        WHERE  c_custkey = o_custkey
        AND    c_mktsegment = 'BUILDING'
        AND    c_custkey = 1
-       UNION ALL
+       UNION
        SELECT c_custkey                  AS cte_custkey,
               c_name                     AS cte_customer_name,
               cte_revenue + o_totalprice AS cte_revenue,
