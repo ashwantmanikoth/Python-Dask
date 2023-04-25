@@ -45,7 +45,7 @@ class IterativeQueryProcessor:
         exec(func_definition, globals(), locals())
         setattr(self, func_name, locals()[func_name])
 
-    def process_iterative_query(self, max_iterations=2):
+    def process_iterative_query(self, max_iterations=10):
         base_query: Callable = getattr(self, "base_query")
         recursive_query: Callable = getattr(self, "recursive_query")
         final_query: Callable = getattr(self, "final_query")
