@@ -18,9 +18,9 @@ class IterativeQueryProcessor:
         else:
             cte_name = None
 
-        self.create_function("base_query", base_code_block, [])
-        self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
-        self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
+        #self.create_function("base_query", base_code_block, [])
+        #self.create_function("recursive_query", iterative_code_block.replace("data_ml", cte_name), [cte_name])
+        #self.create_function("final_query", final_code_block.replace("data_ml", cte_name), [cte_name])
 
     def create_function(self, func_name, code_block, param_names):
         default_args = ', '.join([f'{key}=self.dataframes["{key}"]' for key in self.dataframes.keys()])
