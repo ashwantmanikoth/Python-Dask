@@ -167,8 +167,9 @@ def get_query_plan(sql, udf_list, query_context):
             else:
                 p.append((query_context.cte_params[0], 'LONG_TYPE'))
                 p.append((query_context.cte_params[1], 'STRING_TYPE'))
-                p.append((query_context.cte_params[1], 'STRING_TYPE'))
-                p.append((query_context.cte_params[2], 'DOUBLE_TYPE'))
+                p.append((query_context.cte_params[2], 'STRING_TYPE'))
+                p.append((query_context.cte_params[3], 'DOUBLE_TYPE'))
+                p.append((query_context.cte_params[4], 'LONG_TYPE'))
             #for item in query_context.cte_params:
             #    p.append((item, 'STRING_TYPE'))
         else:

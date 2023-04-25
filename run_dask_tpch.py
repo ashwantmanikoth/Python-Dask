@@ -697,12 +697,13 @@ WHERE    cte_target = 5
 ORDER BY cte_distance ASC limit 1;
 """
 
-sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_segment, cte_revenue) AS
+sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, cte_segment, cte_revenue, cte_lvl) AS
 (
        SELECT c_custkey AS cte_custkey,
               c_name AS cte_customer_name,
               c_mktsegment AS cte_segment,
-              o_totalprice AS cte_revenue
+              o_totalprice AS cte_revenue,
+              1 AS cte_lvl
        FROM   customer,
               orders
        WHERE  c_custkey = o_custkey
@@ -712,7 +713,8 @@ sql_test = """WITH recursive cte_customer_tree (cte_custkey, cte_customer_name, 
        SELECT c_custkey AS cte_custkey,
               c_name AS cte_customer_name,
               c_mktsegment AS cte_segment,
-              cte_revenue + o_totalprice AS cte_revenue
+              cte_revenue + o_totalprice AS cte_revenue,
+              cte_lvl + 1 AS cte_lvl
        FROM   customer,
               orders,
               cte_customer_tree
